@@ -44,7 +44,7 @@ class HandlerPlace {
     //                 inputtype: PlaceInputType.textQuery ,
     //     client_id: "",
     //     client_secret: "",
-    //     key: `AIzaSyAeIt7ZhwPmF2vKdQ6TDE5h4_MKqB2eQJg`,
+    //     key: `##########`,
     //     fields: ["formatted_address", "geometry/location", "place_id", "opening_hours" ]
     //             }
     //         }).then( r => {
