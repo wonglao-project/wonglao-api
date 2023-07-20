@@ -6,3 +6,10 @@ export interface IHanderContent {
         res: Response
     ): Promise<Response>
 }
+
+export interface IHandlerGoogleService{
+    getPlaceIdandPlaceDetail(
+        req: Request,
+        res: Response
+    ): Promise<Response | void>
+}

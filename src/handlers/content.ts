@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { IRepositoryContent } from "../repositories";
 import { ProductCategory, SellerCategory } from "../entities/content";
 import { IsArray, IsEmail, IsIn, IsLatitude, IsLongitude, IsNotEmpty, IsString, validate } from "class-validator";
-import { Expose, plainToClass, plainToInstance } from "class-transformer";
+import { Expose, plainToInstance } from "class-transformer";
 
 
 export function newHandlerContent(repo: IRepositoryContent){
@@ -90,8 +90,7 @@ class HandlerContent {
             return res.status(201).json(createdContent).end()
         }catch(err){
             const errMsg = `failed to create content`
-            throw err
-            return res.status(500).json({ error: errMsg , raw:err }).end();
+            return res.status(500).json({ error: errMsg }).end();
         }
     }
     private convertStringToSellerCategory(sc:string):SellerCategory {
