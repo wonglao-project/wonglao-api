@@ -1,7 +1,7 @@
 import 'reflect-metadata'
 import { PrismaClient } from "@prisma/client";
 import express from "express"
-
+import cors from "cors"
 import { newRepositoryContent } from "./repositories/content";
 import { newHandlerContent } from "./handlers/content";
 import { newHandlerGoogleService } from './handlers/place';
@@ -28,7 +28,7 @@ async function main(){
     const port = process.env.PORT || 8000;
     const server = express();
     server.use(express.json())
-    
+    server.use(cors())
     const contentRouter = express.Router()
     // const placeRouter = express.Router()
     const serviceRouter = express.Router()
@@ -49,7 +49,7 @@ async function main(){
     // placeRouter.get("/detail", handlerPlace.getPlaceDetail.bind(handlerPlace))
 
     //Google Service API
-    serviceRouter.get("/:name",handlerGoogleService.getPlaceIdandPlaceDetail.bind(handlerGoogleService) )
+    serviceRouter.get("/places/search",handlerGoogleService.getPlaceIdandPlaceDetail.bind(handlerGoogleService) )
 
     server.listen(port , ()=> console.log(`server is listening on ${port}`))
 

@@ -1,4 +1,4 @@
-import { Client, PlaceInputType } from "@googlemaps/google-maps-services-js";
+import { Client, PlaceDetailsResponseData, PlaceInputType } from "@googlemaps/google-maps-services-js";
 import { IGoogleApiService } from ".";
 import 'dotenv/config'
 
@@ -32,8 +32,8 @@ class GoogleApiService implements IGoogleApiService {
             })
         }
 
-    async getPlaceDetail(placeIdInput: string): Promise<any>{
-        return this.client.placeDetails({
+    async getPlaceDetail(placeIdInput: string): Promise<PlaceDetailsResponseData>{
+        const result = await this.client.placeDetails({
             params: {
                 place_id: placeIdInput,
                 client_id: "",
@@ -50,6 +50,7 @@ class GoogleApiService implements IGoogleApiService {
                          ]
             }
         })
+        return result.data
     }  
 
 }

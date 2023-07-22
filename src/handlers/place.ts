@@ -3,107 +3,40 @@ import { Client, PlaceInputType } from "@googlemaps/google-maps-services-js";
 import 'dotenv/config'
 import { IGoogleApiService } from "../services";
 import { IHandlerGoogleService } from ".";
+import { IsString, IsNotEmpty, IsLatitude, IsLongitude, IsOptional } from 'class-validator';
+import { Expose, classToPlain, instanceToPlain, plainToInstance } from "class-transformer";
 
-// export function newHandlerPlace(){
-//     return new HandlerPlace
-// }
-
-// class HandlerPlace {
-
-//     async getPlaceId(
-//         req: Request,
-//         res: Response
-//     ): Promise<Response | void>{
-//         const { placeName } = req.body
-//         if (!placeName){
-//             return res.status(400).json({ error: `missing placeName in body`})
-//         }
-
-//         const client = new Client({})
-//         return client.findPlaceFromText({
-//             params: {
-//                 input : placeName  + "Thailand",
-//                 inputtype: PlaceInputType.textQuery ,
-//         client_id: "",
-//         client_secret: "",
-//         key: process.env.API_KEY,
-//         fields: ["formatted_address", "geometry/location", "place_id", "opening_hours" ]
-//             }
-//         })
-//         .then( r => {
-//             console.log(r.data.candidates)
-//             res.status(200).json( r.data.candidates).end()
-//         })
-//         .catch( err => {
-//             console.error(err)
-//             return res.status(500).json({error : `failed to get placeId`}).end()
-//         })
-//     //     try {
-//     //         const client = new Client({})
-//     //         client.findPlaceFromText({
-//     //             params: {
-//     //                 input: placeName,
-//     //                 inputtype: PlaceInputType.textQuery ,
-//     //     client_id: "",
-//     //     client_secret: "",
-//     //     key: `##########`,
-//     //     fields: ["formatted_address", "geometry/location", "place_id", "opening_hours" ]
-//     //             }
-//     //         }).then( r => {
-//     //             placeId = r.data.candidates[0].place_id
-//     //             console.log(r.data.candidates[0].place_id)
-//     //             console.log(r.data.candidates)
-//     //             result = r.data.candidates
-//     //         }).catch(err => {
-//     //             console.log(err)
-//     //         })
-//     //         return res.status(200).json({result}).end()
-//     //     }catch(err){
-//     //         const errMsg = "failed to get place id";
-//     //   console.error(`${errMsg} ${err}`);
-
-//     //   return res.status(500).json({ error: errMsg }).end();
-//     // }
-// }
-
-//     async getPlaceDetail(
-//         req: Request,
-//         res: Response
-//     ):Promise<Response | void>{
-//         const { placeId } = req.body
-//         if(!placeId){
-//             return res.status(400).json({ error: `missing placeId in body`})
-//         }
-//         const client = new Client({})
-//        return  client.placeDetails({
-//             params: {
-//                 place_id : placeId,
-//                 client_id: "",
-//         client_secret: "",
-//         key: process.env.API_KEY,
-//         fields: [
-//             "formatted_address",
-//             "formatted_phone_number",
-//             "name,geometry",
-//             "opening_hours/open_now",
-//             "opening_hours/periods",
-//             "opening_hours/weekday_text"
-//         ]
-//             }
-//         })
-//         .then( r => {
-//             console.log(r.data.result)
-//             res.status(200).json(r.data.result).end()
-//         })
-//         .catch( err => {
-//             console.error(err)
-//             return res.status(500).json({error : `failed to get place detail`}).end()
-//         })
-//     }
-// }
 
 export function newHandlerGoogleService(client: IGoogleApiService){
     return new HandlerGoogleService(client)
+}
+
+export class SearchByPlaceNameResponse {
+    @Expose({ name: 'place_name' })
+    @IsString()
+    @IsNotEmpty()
+    placeName!: string;
+    
+    @Expose({ name: 'operating_time' })
+    @IsString({ each: true })
+    operatingTime!: string[];
+
+    @Expose({ name: 'latitude' })
+    @IsLatitude()
+    latitude!: number;
+
+    @Expose({ name: 'longtitude' })
+    @IsLongitude()
+    longtitude!: number;
+
+    @Expose({ name: 'address' })
+    @IsString()
+    address!: string;
+
+    @Expose({ name: 'tel' })
+    @IsOptional()
+    @IsString()
+    tel!: string;
 }
 
 class HandlerGoogleService implements IHandlerGoogleService {
@@ -117,12 +50,15 @@ class HandlerGoogleService implements IHandlerGoogleService {
         req: Request,
         res: Response
     ): Promise<Response>{
-        if(!req.params.name){
+        if(!req.query.name){
             return res.status(400).json({error: `missing name in params`})
         }
         
-        const placeName = req.params.name
+        const placeName = req.query.name
 
+        if(typeof placeName !== 'string'){
+            return res.status(400).json({error: `name must be string`})
+        }
         try {
             const result = await this.client.getPlaceId(placeName)
             if(!result){
@@ -133,11 +69,23 @@ class HandlerGoogleService implements IHandlerGoogleService {
             }
             console.log({result:result.data.candidates})
 
+            
             const placeId = result.data.candidates[0].place_id
             const details = await this.client.getPlaceDetail(placeId)
 
-            console.log(details.data.result)
-            return res.status(200).json({ details: details.data.result }).end()
+            const detailsResult = details.result as Required<typeof details['result']>
+            const response = plainToInstance(SearchByPlaceNameResponse, { 
+                place_name: detailsResult.name, 
+                operating_time: detailsResult.opening_hours.weekday_text,
+                latitude: detailsResult.geometry.location.lat,
+                longtitude: detailsResult.geometry.location.lng,
+                address: detailsResult.formatted_address,
+                tel: detailsResult.formatted_phone_number,
+             })
+            
+            console.log(details)
+            console.log(response)
+            return res.status(200).json( instanceToPlain(response) ).end()
 
         } catch(err){
             console.log(err)
@@ -146,3 +94,5 @@ class HandlerGoogleService implements IHandlerGoogleService {
 
     }
 }
+
+
