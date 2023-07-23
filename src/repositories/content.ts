@@ -36,12 +36,13 @@ class RepositoryContent implements IRepositoryContent {
         product_category: this.convertToPrismaProductCategory(
           arg.product_category
         ),
-        imges: arg.imges,
+        images: arg.images,
       },
     });
 
     return await this.db.seller.create({
       data: {
+        userId: arg.userId,
         place_name: arg.place_name,
         operating_time: arg.operating_time,
         description: arg.description,
@@ -54,7 +55,7 @@ class RepositoryContent implements IRepositoryContent {
         product_category: this.convertToPrismaProductCategory(
           arg.product_category
         ),
-        imges: arg.imges,
+        images: arg.images,
       },
     });
   }
