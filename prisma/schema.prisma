@@ -8,30 +8,35 @@ datasource db {
 }
 
 model User {
-    id       String    @id @default(uuid())
-    username String    @unique
-    password String
-    name     String
-    seller   Seller[]
-    comments Comment[]  
+    id              String    @id @default(uuid())
+    username        String    @unique
+    password        String
+    name            String
+    favSellers      FavSeller[]
+    favProducts     FavProduct[]
+    sellers         Seller[]
+}
+
+model FavSeller {
+    id               Int             @id @unique @default(autoincrement())
+    seller           Seller          @relation(fields: [sellerId], references: [id])
+    sellerId         Int
+    user             User            @relation(fields: [userId], references: [id])
+    userId           String
+}
+
+model FavProduct {
+    id               Int             @id @unique @default(autoincrement())
+    product          Product         @relation(fields: [productId], references: [id])
+    productId        Int
+    user             User            @relation(fields: [userId], references: [id])
+    userId           String
 }
 
 model Product {
-    id          Int       @id @default(autoincrement())
-    description String
-    comments    Comment[]
-}
-
-model Comment {
-    timestamp Int @id @default(autoincrement())
-    rating    Int
-
-    //option
-    comments   String
-    user      User?    @relation(fields: [userId], references: [id])
-    userId    String?
-    product   Product? @relation(fields: [productId], references: [id])
-    productId Int?
+    id              Int       @id @default(autoincrement())
+    description     String
+    favProduct      FavProduct[]
 }
 
 enum SellerCategory {
@@ -46,7 +51,7 @@ enum ProductCategory {
 }
 
 model Seller {
-    id               Int             @unique @default(autoincrement())
+    id               Int       @id @default(autoincrement())
     place_name       String
     operating_time   String[]
     description      String
@@ -57,7 +62,10 @@ model Seller {
     email            String
     category         SellerCategory
     product_category ProductCategory
-    imges            String
+    images           String[]
     user             User            @relation(fields: [userId], references: [id])
     userId           String
+    favSellers       FavSeller[]
+    
 }
+
