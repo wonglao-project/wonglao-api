@@ -35,5 +35,5 @@ export interface With_User {
 export interface IHandlerUser {
   register: HandlerFunc<AppRequest<Empty, WithUser>>;
   login: HandlerFunc<AppRequest<Empty, WithUser>>;
-  logout: HandlerFunc<JwtAuthRequest<Empty, Empty>>;
+  logout: HandlerFunc<JwtAuthRequest>;
 }

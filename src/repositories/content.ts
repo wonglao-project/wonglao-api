@@ -24,7 +24,6 @@ class RepositoryContent implements IRepositoryContent {
   async createContent(arg: ICreateContent): Promise<any> {
     console.log({
       data: {
-        userId: arg.userId,
         place_name: arg.place_name,
         operating_time: arg.operating_time,
         description: arg.description,
@@ -42,8 +41,23 @@ class RepositoryContent implements IRepositoryContent {
     });
 
     return await this.db.seller.create({
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            password: false,
+          },
+        },
+      },
       data: {
-        userId: arg.userId,
+        userId: undefined,
+        user: {
+          connect: {
+            id: arg.userId,
+          },
+        },
         place_name: arg.place_name,
         operating_time: arg.operating_time,
         description: arg.description,

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { IRepositoryContent } from "../repositories";
 import { ProductCategory, SellerCategory } from "../entities/content";
 import {
@@ -12,41 +12,52 @@ import {
   validate,
 } from "class-validator";
 import { Expose, plainToInstance } from "class-transformer";
+import { JwtAuthRequest } from "../auth/jwt";
 
 export function newHandlerContent(repo: IRepositoryContent) {
   return new HandlerContent(repo);
 }
 
 class CreateContentRequest {
+  @IsNotEmpty()
+  userId!: String;
+
   @IsString()
   @IsNotEmpty()
-  userId: string;
-  @IsString()
-  @IsNotEmpty()
-  @Expose({ name: "Place_name" })
+  @Expose({ name: "place_name" })
   place_name!: string;
+
   @IsArray()
   @IsString({ each: true })
   operating_time!: string[];
+
   @IsString()
   description!: string;
+
   @IsLatitude()
   latitude!: number;
+
   @IsLongitude()
   longitude!: number;
+
   @IsString()
   address!: string;
+
   @IsString()
   tel!: string;
+
   @IsEmail()
   email!: string;
+
   @IsString()
   @IsIn(["Bar", "Brewer"])
   category!: string;
+
   @IsString()
   @IsIn(["Gin", "Rum", "WhiteSpirit"])
   product_category!: string;
-  @IsString()
+
+  @IsString({ each: true })
   @IsArray()
   imges!: string[];
 }
@@ -58,9 +69,10 @@ class HandlerContent {
     this.repo = repo;
   }
 
-  async createContent(req: Request, res: Response): Promise<Response> {
+  async createContent(req: JwtAuthRequest, res: Response): Promise<Response> {
     const body = plainToInstance(CreateContentRequest, req.body);
     const validationErrors = await validate(body);
+
     if (validationErrors.length > 0) {
       return res.status(400).json(validationErrors);
     }
@@ -83,8 +95,9 @@ class HandlerContent {
     // }
 
     try {
+      const userId = req.payload.id;
       const createdContent = await this.repo.createContent({
-        userId: body.userId,
+        userId: userId,
         place_name: body.place_name,
         operating_time: body.operating_time,
         description: body.description,
@@ -99,6 +112,9 @@ class HandlerContent {
         ),
         images: body.imges,
       });
+
+      console.log(createdContent);
+
       return res.status(201).json(createdContent).end();
     } catch (err) {
       const errMsg = `failed to create content`;
