@@ -24,6 +24,7 @@ class RepositoryContent implements IRepositoryContent {
   async createContent(arg: ICreateContent): Promise<any> {
     console.log({
       data: {
+        userId: arg.userId,
         place_name: arg.place_name,
         operating_time: arg.operating_time,
         description: arg.description,

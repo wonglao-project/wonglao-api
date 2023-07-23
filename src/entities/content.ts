@@ -10,6 +10,7 @@ export enum ProductCategory {
 }
 
 export interface ICreateContent {
+  userId: string;
   place_name: string;
   operating_time: string[];
   description: string;
