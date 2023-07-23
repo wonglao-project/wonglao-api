@@ -7,6 +7,33 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+model User {
+    id       String    @id @default(uuid())
+    username String    @unique
+    password String
+    name     String
+    seller   Seller[]
+    comments Comment[]  
+}
+
+model Product {
+    id          Int       @id @default(autoincrement())
+    description String
+    comments    Comment[]
+}
+
+model Comment {
+    timestamp Int @id @default(autoincrement())
+    rating    Int
+
+    //option
+    comments   String
+    user      User?    @relation(fields: [userId], references: [id])
+    userId    String?
+    product   Product? @relation(fields: [productId], references: [id])
+    productId Int?
+}
+
 enum SellerCategory {
     Bar
     Brewer
@@ -31,4 +58,6 @@ model Seller {
     category         SellerCategory
     product_category ProductCategory
     imges            String
+    user             User            @relation(fields: [userId], references: [id])
+    userId           String
 }

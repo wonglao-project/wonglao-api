@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import cors from "cors";
+import { createClient } from "redis";
 
 import { newRepositoryContent } from "./repositories/content";
 import { newHandlerContent } from "./handlers/content";
