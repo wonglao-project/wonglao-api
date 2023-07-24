@@ -20,7 +20,7 @@ export function newHandlerContent(repo: IRepositoryContent) {
 
 class CreateContentRequest {
   @IsNotEmpty()
-  userId!: String;
+  userId!: string;
 
   @IsString()
   @IsNotEmpty()
@@ -70,30 +70,32 @@ class HandlerContent {
   }
 
   async createContent(req: JwtAuthRequest, res: Response): Promise<Response> {
-    const body = plainToInstance(CreateContentRequest, req.body);
-    const validationErrors = await validate(body);
+    const userId = req.payload.id;
+    const body = { ...req.body, userId }
+
+    const validateBody = plainToInstance(CreateContentRequest, body);
+    const validationErrors = await validate(validateBody);
     console.log(validationErrors);
     if (validationErrors.length > 0) {
       return res.status(400).json(validationErrors);
     }
 
     try {
-      const userId = req.payload.id;
       const createdContent = await this.repo.createContent({
-        userId: userId,
-        place_name: body.place_name,
-        operating_time: body.operating_time,
-        description: body.description,
-        latitude: body.latitude,
-        longitude: body.longitude,
-        address: body.address,
-        tel: body.tel,
-        email: body.email,
-        category: this.convertStringToSellerCategory(body.category),
+        userId: validateBody.userId,
+        place_name: validateBody.place_name,
+        operating_time: validateBody.operating_time,
+        description: validateBody.description,
+        latitude: validateBody.latitude,
+        longitude: validateBody.longitude,
+        address: validateBody.address,
+        tel: validateBody.tel,
+        email: validateBody.email,
+        category: this.convertStringToSellerCategory(validateBody.category),
         product_category: this.convertStringToProductCategory(
-          body.product_category
+          validateBody.product_category
         ),
-        images: body.imges,
+        images: validateBody.imges,
       });
 
       console.log(createdContent);

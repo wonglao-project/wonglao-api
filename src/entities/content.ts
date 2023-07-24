@@ -23,3 +23,7 @@ export interface ICreateContent {
   product_category: ProductCategory;
   images: string[];
 }
+
+export interface IContent {
+  id: number
+}

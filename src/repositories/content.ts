@@ -7,6 +7,7 @@ import {
   ICreateContent,
   SellerCategory,
   ProductCategory,
+  IContent,
 } from "../entities/content";
 import { IRepositoryContent } from ".";
 
@@ -21,7 +22,7 @@ class RepositoryContent implements IRepositoryContent {
     this.db = db;
   }
 
-  async createContent(arg: ICreateContent): Promise<any> {
+  async createContent(arg: ICreateContent): Promise<IContent> {
     console.log({
       data: {
         place_name: arg.place_name,
@@ -73,6 +74,10 @@ class RepositoryContent implements IRepositoryContent {
         images: arg.images,
       },
     });
+  }
+
+  async getContents(): Promise<IContent[]> {
+    return await this.db.seller.findMany();
   }
 
   private convertToPrismaCategory(sc: SellerCategory): PrismaSellerCategory {
