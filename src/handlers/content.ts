@@ -72,27 +72,10 @@ class HandlerContent {
   async createContent(req: JwtAuthRequest, res: Response): Promise<Response> {
     const body = plainToInstance(CreateContentRequest, req.body);
     const validationErrors = await validate(body);
-
+    console.log(validationErrors);
     if (validationErrors.length > 0) {
       return res.status(400).json(validationErrors);
     }
-
-    // const {
-    //     place_name,
-    //     operating_time,
-    //     description,
-    //     latitude,
-    //     longitude,
-    //     address,
-    //     tel,
-    //     email,
-    //     category,
-    //     product_category,
-    //     imges
-    // } = req.body
-    // if(! place_name){
-    //     return res.status(400).json({error : `missing place_name in body`}).end()
-    // }
 
     try {
       const userId = req.payload.id;
