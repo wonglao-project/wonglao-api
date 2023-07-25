@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { IRepositoryContent } from "../repositories";
-import { ProductCategory, SellerCategory } from "../entities/content";
+import {  SellerCategory } from "../entities/content";
 import {
   IsArray,
   IsEmail,
@@ -53,9 +53,9 @@ class CreateContentRequest {
   @IsIn(["Bar", "Brewer"])
   category!: string;
 
-  @IsString()
-  @IsIn(["Gin", "Rum", "WhiteSpirit"])
-  product_category!: string;
+  // @IsString()
+  // @IsIn(["Gin", "Rum", "WhiteSpirit"])
+  // product_category!: string;
 
   @IsString({ each: true })
   @IsArray()
@@ -92,9 +92,6 @@ class HandlerContent {
         tel: validateBody.tel,
         email: validateBody.email,
         category: this.convertStringToSellerCategory(validateBody.category),
-        product_category: this.convertStringToProductCategory(
-          validateBody.product_category
-        ),
         images: validateBody.imges,
       });
 
@@ -120,21 +117,21 @@ class HandlerContent {
     }
   }
 
-  private convertStringToProductCategory(pc: string): ProductCategory {
-    switch (pc) {
-      case "Gin":
-        return ProductCategory.Gin;
+  // private convertStringToProductCategory(pc: string): ProductCategory {
+  //   switch (pc) {
+  //     case "Gin":
+  //       return ProductCategory.Gin;
 
-      case "Rum":
-        return ProductCategory.Rum;
+  //     case "Rum":
+  //       return ProductCategory.Rum;
 
-      case "WhiteSpirit":
-        return ProductCategory.WhiteSpirit;
+  //     case "WhiteSpirit":
+  //       return ProductCategory.WhiteSpirit;
 
-      default:
-        throw new Error(`${pc} is not a valid ProductCategory`);
-    }
-  }
+  //     default:
+  //       throw new Error(`${pc} is not a valid ProductCategory`);
+  //   }
+  // }
 
   async getContents(req: Request, res: Response): Promise<Response> {
     try {

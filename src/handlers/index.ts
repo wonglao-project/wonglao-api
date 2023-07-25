@@ -3,6 +3,8 @@ import { JwtAuthRequest } from "../auth/jwt";
 
 export interface IHanderContent {
   createContent(req: Request, res: Response): Promise<Response>;
+  getContents(req: Request, res: Response): Promise<Response>
+  getContentById(req: Request, res: Response): Promise<Response>
 }
 
 export interface IHandlerGoogleService {
