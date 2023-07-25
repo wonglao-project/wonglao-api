@@ -8,35 +8,38 @@ datasource db {
 }
 
 model User {
-    id              String    @id @default(uuid())
-    username        String    @unique
-    password        String
-    name            String
-    favSellers      FavSeller[]
-    favProducts     FavProduct[]
-    sellers         Seller[]
+    id          String       @id @default(uuid())
+    username    String       @unique
+    password    String
+    name        String
+    favSellers  FavSeller[]
+    favProducts FavProduct[]
+    sellers     Seller[]
 }
 
 model FavSeller {
-    id               Int             @id @unique @default(autoincrement())
-    seller           Seller          @relation(fields: [sellerId], references: [id])
-    sellerId         Int
-    user             User            @relation(fields: [userId], references: [id])
-    userId           String
+    id       Int    @id @unique @default(autoincrement())
+    seller   Seller @relation(fields: [sellerId], references: [id])
+    sellerId Int
+    user     User   @relation(fields: [userId], references: [id])
+    userId   String
 }
 
 model FavProduct {
-    id               Int             @id @unique @default(autoincrement())
-    product          Product         @relation(fields: [productId], references: [id])
-    productId        Int
-    user             User            @relation(fields: [userId], references: [id])
-    userId           String
+    id        Int     @id @unique @default(autoincrement())
+    product   Product @relation(fields: [productId], references: [id])
+    productId Int
+    user      User    @relation(fields: [userId], references: [id])
+    userId    String
 }
 
 model Product {
-    id              Int       @id @default(autoincrement())
-    description     String
-    favProduct      FavProduct[]
+    id               Int             @id @default(autoincrement())
+    description      String
+    product_category ProductCategory
+    favProduct       FavProduct[]
+    seller           Seller          @relation(fields: [sellerId], references: [id])
+    sellerId         Int
 }
 
 enum SellerCategory {
@@ -51,21 +54,19 @@ enum ProductCategory {
 }
 
 model Seller {
-    id               Int       @id @default(autoincrement())
-    place_name       String
-    operating_time   String[]
-    description      String
-    latitude         Float
-    longitude        Float
-    address          String
-    tel              String
-    email            String
-    category         SellerCategory
-    product_category ProductCategory
-    images           String[]
-    user             User            @relation(fields: [userId], references: [id])
-    userId           String
-    favSellers       FavSeller[]
-    
+    id             Int            @id @default(autoincrement())
+    place_name     String
+    operating_time String[]
+    description    String
+    latitude       Float
+    longitude      Float
+    address        String
+    tel            String
+    email          String
+    category       SellerCategory
+    images         String[]
+    user           User           @relation(fields: [userId], references: [id])
+    userId         String
+    favSellers     FavSeller[]
+    products       Product[]
 }
-

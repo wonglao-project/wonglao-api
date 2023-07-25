@@ -25,7 +25,6 @@ class RepositoryContent implements IRepositoryContent {
         tel: arg.tel,
         email: arg.email,
         category: arg.category,
-        product_category: arg.product_category,
         images: arg.images,
       },
     });
@@ -57,7 +56,6 @@ class RepositoryContent implements IRepositoryContent {
         tel: arg.tel,
         email: arg.email,
         category: arg.category,
-        product_category: arg.product_category,
         images: arg.images,
       },
     });
@@ -96,7 +94,6 @@ class RepositoryContent implements IRepositoryContent {
         tel: arg.tel,
         email: arg.email,
         category: arg.category,
-        product_category: arg.product_category,
         images: arg.images,
       },
     });

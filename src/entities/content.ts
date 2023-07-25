@@ -1,6 +1,6 @@
 import {
   SellerCategory as PrismaSellerCategory,
-  ProductCategory as PrismaProductCategory,
+  // ProductCategory as PrismaProductCategory,
 } from "@prisma/client";
 
 export enum SellerCategory {
@@ -25,7 +25,6 @@ export interface ICreateContent {
   tel: string;
   email: string;
   category: PrismaSellerCategory;
-  product_category: PrismaProductCategory;
   images: string[];
 }
 
