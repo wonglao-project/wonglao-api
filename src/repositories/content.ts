@@ -1,14 +1,5 @@
-import {
-  PrismaClient,
-  SellerCategory as PrismaSellerCategory,
-  ProductCategory as PrismaProductCategory,
-} from "@prisma/client";
-import {
-  ICreateContent,
-  SellerCategory,
-  ProductCategory,
-  IContent,
-} from "../entities/content";
+import { PrismaClient } from "@prisma/client";
+import { ICreateContent, IContent } from "../entities/content";
 import { IRepositoryContent } from ".";
 
 export function newRepositoryContent(db: PrismaClient): IRepositoryContent {
@@ -33,10 +24,8 @@ class RepositoryContent implements IRepositoryContent {
         address: arg.address,
         tel: arg.tel,
         email: arg.email,
-        category: this.convertToPrismaCategory(arg.category),
-        product_category: this.convertToPrismaProductCategory(
-          arg.product_category
-        ),
+        category: arg.category,
+        product_category: arg.product_category,
         images: arg.images,
       },
     });
@@ -67,10 +56,8 @@ class RepositoryContent implements IRepositoryContent {
         address: arg.address,
         tel: arg.tel,
         email: arg.email,
-        category: this.convertToPrismaCategory(arg.category),
-        product_category: this.convertToPrismaProductCategory(
-          arg.product_category
-        ),
+        category: arg.category,
+        product_category: arg.product_category,
         images: arg.images,
       },
     });
@@ -80,24 +67,29 @@ class RepositoryContent implements IRepositoryContent {
     return await this.db.seller.findMany();
   }
 
-  private convertToPrismaCategory(sc: SellerCategory): PrismaSellerCategory {
-    switch (sc) {
-      case SellerCategory.Bar:
-        return "Bar";
-      case SellerCategory.Brewer:
-        return "Brewer";
-    }
+  async getContentById(id: number): Promise<IContent | null> {
+    return await this.db.seller.findUnique({
+      where: { id },
+    });
   }
-  private convertToPrismaProductCategory(
-    pc: ProductCategory
-  ): PrismaProductCategory {
-    switch (pc) {
-      case ProductCategory.Gin:
-        return "Gin";
-      case ProductCategory.Rum:
-        return "Rum";
-      case ProductCategory.WhiteSpirit:
-        return "WhiteSpirit";
-    }
-  }
+  // private convertToPrismaCategory(sc: SellerCategory): PrismaSellerCategory {
+  //   switch (sc) {
+  //     case SellerCategory.Bar:
+  //       return "Bar";
+  //     case SellerCategory.Brewer:
+  //       return "Brewer";
+  //   }
+  // }
+  // private convertToPrismaProductCategory(
+  //   pc: ProductCategory
+  // ): PrismaProductCategory {
+  //   switch (pc) {
+  //     case ProductCategory.Gin:
+  //       return "Gin";
+  //     case ProductCategory.Rum:
+  //       return "Rum";
+  //     case ProductCategory.WhiteSpirit:
+  //       return "WhiteSpirit";
+  //   }
+  // }
 }

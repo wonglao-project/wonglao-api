@@ -60,7 +60,6 @@ async function main() {
   server.use("/service", serviceRouter);
 
   //เรียก middleware
-  contentRouter.use(handlerMiddleware.jwtMiddleware.bind(handlerMiddleware));
 
   //Check server status
   server.get("/", (_, res) => {
@@ -77,7 +76,13 @@ async function main() {
   );
 
   // Content API
-  contentRouter.post("/", handlerContent.createContent.bind(handlerContent));
+  contentRouter.post(
+    "/",
+    handlerMiddleware.jwtMiddleware.bind(handlerMiddleware),
+    handlerContent.createContent.bind(handlerContent)
+  );
+  contentRouter.get("/", handlerContent.getContents.bind(handlerContent));
+  contentRouter.get("/:id", handlerContent.getContentById.bind(handlerContent));
 
   // Place API
   // placeRouter.get("/", handlerPlace.getPlaceId.bind(handlerPlace))

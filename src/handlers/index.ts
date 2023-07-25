@@ -37,3 +37,7 @@ export interface IHandlerUser {
   login: HandlerFunc<AppRequest<Empty, WithUser>>;
   logout: HandlerFunc<JwtAuthRequest>;
 }
+
+export interface WithId {
+  id: string;
+}
