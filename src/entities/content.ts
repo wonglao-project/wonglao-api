@@ -32,3 +32,16 @@ export interface ICreateContent {
 export interface IContent extends ICreateContent {
   id: number;
 }
+
+export interface IUpdate {
+  id: number;
+  userId: string;
+  operating_time: string[];
+  description: string;
+  address: string;
+  tel: string;
+  email: string;
+  category: undefined;
+  product_category: undefined;
+  images: string[];
+}
