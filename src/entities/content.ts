@@ -24,6 +24,6 @@ export interface ICreateContent {
   images: string[];
 }
 
-export interface IContent {
-  id: number
+export interface IContent extends ICreateContent {
+  id: number;
 }

@@ -71,7 +71,7 @@ class HandlerContent {
 
   async createContent(req: JwtAuthRequest, res: Response): Promise<Response> {
     const userId = req.payload.id;
-    const body = { ...req.body, userId }
+    const body = { ...req.body, userId };
 
     const validateBody = plainToInstance(CreateContentRequest, body);
     const validationErrors = await validate(validateBody);
@@ -131,6 +131,16 @@ class HandlerContent {
 
       default:
         throw new Error(`${pc} is not a valid ProductCategory`);
+    }
+  }
+
+  async getContents(req: Request, res: Response): Promise<Response> {
+    try {
+      const contents = await this.repo.getContents();
+      return res.status(200).json(contents).end();
+    } catch (err) {
+      console.error("failed to get contents", err);
+      return res.status(500).json({ error: "failed to get contents" }).end();
     }
   }
 }
