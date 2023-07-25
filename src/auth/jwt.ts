@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { IRepositoryBlacklist } from "../repositories/blacklist";
-import { Empty } from "../handlers";
 
 const secret = process.env.JWT_SECRET || "wonglao-api-secrets";
 
@@ -37,7 +36,7 @@ export class HandlerMiddleware {
   }
 
   async jwtMiddleware(
-    req: JwtAuthRequest<Empty, Empty>,
+    req: JwtAuthRequest<any, any>,
     res: Response,
     next: NextFunction
   ) {
