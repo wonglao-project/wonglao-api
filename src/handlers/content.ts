@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { IRepositoryContent } from "../repositories";
 import { ProductCategory, SellerCategory } from "../entities/content";
 import {
@@ -144,5 +144,31 @@ class HandlerContent {
       console.error("failed to get contents", err);
       return res.status(500).json({ error: "failed to get contents" }).end();
     }
+  }
+
+  async getContentById(req: Request, res: Response): Promise<Response> {
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+      return res
+        .status(400)
+        .json({ error: `id ${req.params.id} is not a number` });
+    }
+
+    return this.repo
+      .getContentById(id)
+      .then((content) => {
+        if (!content) {
+          return res
+            .status(404)
+            .json({ error: `no such content : ${id}` })
+            .end();
+        }
+        return res.status(200).json(content).end();
+      })
+      .catch((err) => {
+        const errMsg = `failed to get content ${id}: ${err}`;
+        console.error(errMsg);
+        return res.status(500).json({ error: errMsg });
+      });
   }
 }

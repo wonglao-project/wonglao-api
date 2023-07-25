@@ -67,6 +67,11 @@ class RepositoryContent implements IRepositoryContent {
     return await this.db.seller.findMany();
   }
 
+  async getContentById(id: number): Promise<IContent | null> {
+    return await this.db.seller.findUnique({
+      where: { id },
+    });
+  }
   // private convertToPrismaCategory(sc: SellerCategory): PrismaSellerCategory {
   //   switch (sc) {
   //     case SellerCategory.Bar:

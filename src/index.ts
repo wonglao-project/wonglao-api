@@ -82,6 +82,7 @@ async function main() {
     handlerContent.createContent.bind(handlerContent)
   );
   contentRouter.get("/", handlerContent.getContents.bind(handlerContent));
+  contentRouter.get("/:id", handlerContent.getContentById.bind(handlerContent));
 
   // Place API
   // placeRouter.get("/", handlerPlace.getPlaceId.bind(handlerPlace))
