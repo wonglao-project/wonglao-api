@@ -1,12 +1,17 @@
+import {
+  SellerCategory as PrismaSellerCategory,
+  ProductCategory as PrismaProductCategory,
+} from "@prisma/client";
+
 export enum SellerCategory {
-  Bar,
-  Brewer,
+  Bar = "Bar",
+  Brewer = "Brewer",
 }
 
 export enum ProductCategory {
-  WhiteSpirit,
-  Rum,
-  Gin,
+  WhiteSpirit = "WhiteSpirit",
+  Rum = "Rum",
+  Gin = "Gin",
 }
 
 export interface ICreateContent {
@@ -19,8 +24,8 @@ export interface ICreateContent {
   address: string;
   tel: string;
   email: string;
-  category: SellerCategory;
-  product_category: ProductCategory;
+  category: PrismaSellerCategory;
+  product_category: PrismaProductCategory;
   images: string[];
 }
 

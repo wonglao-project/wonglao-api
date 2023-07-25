@@ -106,6 +106,7 @@ class HandlerContent {
       return res.status(500).json({ error: errMsg }).end();
     }
   }
+
   private convertStringToSellerCategory(sc: string): SellerCategory {
     switch (sc) {
       case "Bar":
@@ -118,6 +119,7 @@ class HandlerContent {
         throw new Error(`${sc} is not a valid SellerCategory`);
     }
   }
+
   private convertStringToProductCategory(pc: string): ProductCategory {
     switch (pc) {
       case "Gin":
