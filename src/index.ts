@@ -83,6 +83,11 @@ async function main() {
   );
   contentRouter.get("/", handlerContent.getContents.bind(handlerContent));
   contentRouter.get("/:id", handlerContent.getContentById.bind(handlerContent));
+  contentRouter.patch(
+    "/update/:id",
+    handlerMiddleware.jwtMiddleware.bind(handlerMiddleware),
+    handlerContent.updateUserContent.bind(handlerContent)
+  );
 
   // Place API
   // placeRouter.get("/", handlerPlace.getPlaceId.bind(handlerPlace))

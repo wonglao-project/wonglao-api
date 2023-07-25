@@ -87,7 +87,6 @@ class RepositoryContent implements IRepositoryContent {
     return await this.db.seller.update({
       where: { id: arg.id },
       data: {
-        userId: arg.userId,
         operating_time: arg.operating_time,
         description: arg.description,
         address: arg.address,

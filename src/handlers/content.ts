@@ -13,6 +13,7 @@ import {
 } from "class-validator";
 import { Expose, plainToInstance } from "class-transformer";
 import { JwtAuthRequest } from "../auth/jwt";
+import { Empty, WithId, WithMsg } from ".";
 
 export function newHandlerContent(repo: IRepositoryContent) {
   return new HandlerContent(repo);
@@ -69,7 +70,10 @@ class HandlerContent {
     this.repo = repo;
   }
 
-  async createContent(req: JwtAuthRequest, res: Response): Promise<Response> {
+  async createContent(
+    req: JwtAuthRequest<Empty, WithMsg>,
+    res: Response
+  ): Promise<Response> {
     const userId = req.payload.id;
     const body = { ...req.body, userId };
 
