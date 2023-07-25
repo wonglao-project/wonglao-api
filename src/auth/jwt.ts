@@ -23,7 +23,7 @@ export function newHandlerMiddleware(repoBlacklist: IRepositoryBlacklist) {
   return new HandlerMiddleware(repoBlacklist);
 }
 
-export interface JwtAuthRequest extends Request {
+export interface JwtAuthRequest<Params, Body> extends Request {
   token: string;
   payload: Payload;
 }
@@ -35,7 +35,11 @@ export class HandlerMiddleware {
     this.repoBlacklist = repoBlacklist;
   }
 
-  async jwtMiddleware(req: JwtAuthRequest, res: Response, next: NextFunction) {
+  async jwtMiddleware(
+    req: JwtAuthRequest<any, any>,
+    res: Response,
+    next: NextFunction
+  ) {
     const token = req.header("Authorization")?.replace("Bearer ", "");
 
     try {

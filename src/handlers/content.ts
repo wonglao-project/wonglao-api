@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { IRepositoryContent } from "../repositories";
-import {  SellerCategory } from "../entities/content";
+import { SellerCategory } from "../entities/content";
 import {
   IsArray,
   IsEmail,
@@ -13,6 +13,7 @@ import {
 } from "class-validator";
 import { Expose, plainToInstance } from "class-transformer";
 import { JwtAuthRequest } from "../auth/jwt";
+import { Empty, WithId, WithMsg } from ".";
 
 export function newHandlerContent(repo: IRepositoryContent) {
   return new HandlerContent(repo);
@@ -62,6 +63,31 @@ class CreateContentRequest {
   imges!: string[];
 }
 
+class UpdateContentRequest {
+  @IsNotEmpty()
+  operating_time!: string;
+
+  @IsNotEmpty()
+  description!: string;
+
+  @IsNotEmpty()
+  address!: string;
+
+  @IsNotEmpty()
+  tel!: string;
+
+  @IsNotEmpty()
+  email!: string;
+
+  @IsNotEmpty()
+  @IsIn(["Bar", "Brewer"])
+  category!: string;
+
+  @IsNotEmpty({ each: true })
+  @IsArray()
+  image!: string[];
+}
+
 class HandlerContent {
   private readonly repo: IRepositoryContent;
 
@@ -69,7 +95,10 @@ class HandlerContent {
     this.repo = repo;
   }
 
-  async createContent(req: JwtAuthRequest, res: Response): Promise<Response> {
+  async createContent(
+    req: JwtAuthRequest<Empty, WithMsg>,
+    res: Response
+  ): Promise<Response> {
     const userId = req.payload.id;
     const body = { ...req.body, userId };
 
@@ -166,6 +195,75 @@ class HandlerContent {
         const errMsg = `failed to get content ${id}: ${err}`;
         console.error(errMsg);
         return res.status(500).json({ error: errMsg });
+      });
+  }
+
+  async updateUserContent(
+    req: JwtAuthRequest<WithId, WithMsg>,
+    res: Response
+  ): Promise<Response> {
+    const userId = req.payload.id;
+    const body = { ...req.body, userId };
+    console.log(userId, body);
+    const validateBody = plainToInstance(UpdateContentRequest, body);
+    const validationErrors = await validate(validateBody);
+    console.log(validationErrors);
+    if (validationErrors.length > 0) {
+      return res.status(400).json(validationErrors);
+    }
+
+    if (!req.params.id) {
+      return res.status(400).json({ error: `missing id in params` }).end();
+    }
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+      return res
+        .status(400)
+        .json({ error: `id ${req.params.id} is not a number` });
+    }
+
+    const {
+      operating_time,
+      description,
+      address,
+      tel,
+      email,
+      category,
+      product_category,
+      images,
+    } = req.body;
+
+    if (
+      !operating_time ||
+      !description ||
+      !address ||
+      !tel ||
+      !email ||
+      !category ||
+      !product_category ||
+      !images
+    ) {
+      return res.status(400).json({ error: "missing msg in json body" }).end();
+    }
+
+    return this.repo
+      .updateUserContent({
+        id,
+        userId: req.payload.id,
+        operating_time,
+        description,
+        address,
+        tel,
+        email,
+        category,
+        product_category,
+        images,
+      })
+      .then((updated) => res.status(201).json(updated).end())
+      .catch((err) => {
+        const errMsg = `failed to update content ${id}: ${err}`;
+        console.error(errMsg);
+        return res.status(500).json({ error: errMsg }).end();
       });
   }
 }
