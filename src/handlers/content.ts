@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { IRepositoryContent } from "../repositories";
-import {  SellerCategory } from "../entities/content";
+import { SellerCategory } from "../entities/content";
 import {
   IsArray,
   IsEmail,
@@ -166,6 +166,27 @@ class HandlerContent {
         const errMsg = `failed to get content ${id}: ${err}`;
         console.error(errMsg);
         return res.status(500).json({ error: errMsg });
+      });
+  }
+  async deleteContent(
+    req: JwtAuthRequest<WithId, WithMsg>,
+    res: Response
+  ): Promise<Response> {
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+      return res
+        .status(400)
+        .json({ error: `id ${req.params.id} is not a number` });
+    }
+
+    return this.repo
+      .deleteUserContent(id)
+      .then((deleted) => res.status(200).json(deleted).end())
+      .catch((err) => {
+        console.error(`failed to delete content ${id} : ${err}`);
+        return res
+          .status(500)
+          .json({ error: `failed to delete content ${id}` });
       });
   }
 }
