@@ -3,8 +3,8 @@ import { JwtAuthRequest } from "../auth/jwt";
 
 export interface IHanderContent {
   createContent(req: Request, res: Response): Promise<Response>;
-  getContents(req: Request, res: Response): Promise<Response>
-  getContentById(req: Request, res: Response): Promise<Response>
+  getContents(req: Request, res: Response): Promise<Response>;
+  getContentById(req: Request, res: Response): Promise<Response>;
 }
 
 export interface IHandlerGoogleService {
@@ -37,9 +37,22 @@ export interface With_User {
 export interface IHandlerUser {
   register: HandlerFunc<AppRequest<Empty, WithUser>>;
   login: HandlerFunc<AppRequest<Empty, WithUser>>;
-  logout: HandlerFunc<JwtAuthRequest>;
+  logout: HandlerFunc<JwtAuthRequest<Empty, Empty>>;
 }
 
 export interface WithId {
   id: string;
+}
+
+export interface WithMsg {
+  place_name: string;
+  operating_time: string[];
+  description: string;
+  latitude: string;
+  longitude: string;
+  address: string;
+  tel: string;
+  email: string;
+  category: string;
+  images: string[];
 }
