@@ -180,12 +180,18 @@ class HandlerContent {
     if (isNaN(id)) {
       return res
         .status(400)
-        .json({ error: `id ${req.params.id} is not a number` });
+        .json({ error: `id: ${req.params.id} is not a number` });
     }
 
     return this.repo
       .deleteUserContent(id)
-      .then((deleted) => res.status(200).json(deleted).end())
+      .then((deleted) =>
+        res
+          .status(200)
+          .json({ status: `deleted content id: ${id}` })
+          .end()
+      )
+
       .catch((err) => {
         console.error(`failed to delete content ${id} : ${err}`);
         return res

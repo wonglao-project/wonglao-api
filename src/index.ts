@@ -6,9 +6,9 @@ import { createClient } from "redis";
 
 import { newRepositoryContent } from "./repositories/content";
 import { newHandlerContent } from "./handlers/content";
-import { newHandlerGoogleService } from "./handlers/place";
-import { Client } from "@googlemaps/google-maps-services-js";
-import { newGoogleApiService } from "./services/googleService";
+// import { newHandlerGoogleService } from "./handlers/place";
+// import { Client } from "@googlemaps/google-maps-services-js";
+// import { newGoogleApiService } from "./services/googleService";
 import { newRepositoryUser } from "./repositories/user";
 import { newHandlerUser } from "./handlers/user";
 import { newRepositoryBlacklist } from "./repositories/blacklist";
@@ -17,7 +17,7 @@ import { HandlerMiddleware } from "./auth/jwt";
 
 async function main() {
   const db = new PrismaClient();
-  const client = new Client();
+  // const client = new Client();
   const redis = createClient();
 
   try {
@@ -32,8 +32,8 @@ async function main() {
   const handlerContent = newHandlerContent(repoContent);
 
   // const handlerPlace = newHandlerPlace()
-  const googleApiService = newGoogleApiService(client);
-  const handlerGoogleService = newHandlerGoogleService(googleApiService);
+  // const googleApiService = newGoogleApiService(client);
+  // const handlerGoogleService = newHandlerGoogleService(googleApiService);
 
   const repoUser = newRepositoryUser(db);
   const repoBlacklist = newRepositoryBlacklist(redis);
@@ -85,19 +85,26 @@ async function main() {
   contentRouter.get("/:id", handlerContent.getContentById.bind(handlerContent));
   contentRouter.patch(
     "/update/:id",
+    handlerMiddleware.jwtMiddleware.bind(handlerMiddleware)
+    //   handlerContent.updateUserContent.bind(handlerContent)
+    // );
+  );
+
+  contentRouter.delete(
+    "/:id",
     handlerMiddleware.jwtMiddleware.bind(handlerMiddleware),
-    handlerContent.updateUserContent.bind(handlerContent)
+    handlerContent.deleteContent.bind(handlerContent)
   );
 
   // Place API
   // placeRouter.get("/", handlerPlace.getPlaceId.bind(handlerPlace))
   // placeRouter.get("/detail", handlerPlace.getPlaceDetail.bind(handlerPlace))
 
-  //Google Service API
-  serviceRouter.get(
-    "/places/search",
-    handlerGoogleService.getPlaceIdandPlaceDetail.bind(handlerGoogleService)
-  );
+  // Google Service API
+  // serviceRouter.get(
+  //   "/places/search",
+  //   handlerGoogleService.getPlaceIdandPlaceDetail.bind(handlerGoogleService)
+  // )
 
   server.listen(port, () => console.log(`server is listening on ${port}`));
 }
