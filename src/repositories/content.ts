@@ -97,6 +97,17 @@ class RepositoryContent implements IRepositoryContent {
       },
     });
   }
+
+  async deleteUserContent(id: number): Promise<ICreateContent> {
+    const content = await this.db.seller.findFirst({
+      where: { id },
+    });
+    if (!content) {
+      return Promise.reject(`no such content : ${id}`);
+    }
+
+    return await this.db.seller.delete({ where: { id } });
+  }
 }
 // private convertToPrismaCategory(sc: SellerCategory): PrismaSellerCategory {
 //   switch (sc) {
