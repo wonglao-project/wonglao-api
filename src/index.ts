@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import cors from "cors";

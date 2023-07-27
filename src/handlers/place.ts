@@ -2,46 +2,12 @@ import { Request, Response } from "express";
 import "dotenv/config";
 import { IGoogleApiService } from "../services";
 import { IHandlerGoogleService } from ".";
-import {
-  IsString,
-  IsNotEmpty,
-  IsLatitude,
-  IsLongitude,
-  IsOptional,
-} from "class-validator";
-import { Expose, instanceToPlain, plainToInstance } from "class-transformer";
+
 
 export function newHandlerGoogleService(client: IGoogleApiService) {
   return new HandlerGoogleService(client);
 }
 
-export class SearchByPlaceNameResponse {
-  @Expose({ name: "place_name" })
-  @IsString()
-  @IsNotEmpty()
-  placeName!: string;
-
-  @Expose({ name: "operating_time" })
-  @IsString({ each: true })
-  operatingTime!: string[];
-
-  @Expose({ name: "latitude" })
-  @IsLatitude()
-  latitude!: number;
-
-  @Expose({ name: "longtitude" })
-  @IsLongitude()
-  longtitude!: number;
-
-  @Expose({ name: "address" })
-  @IsString()
-  address!: string;
-
-  @Expose({ name: "tel" })
-  @IsOptional()
-  @IsString()
-  tel!: string;
-}
 
 class HandlerGoogleService implements IHandlerGoogleService {
   private readonly client: IGoogleApiService;
@@ -76,21 +42,18 @@ class HandlerGoogleService implements IHandlerGoogleService {
       const placeId = result.data.candidates[0].place_id;
       const details = await this.client.getPlaceDetail(placeId);
 
-      const detailsResult = details.result as Required<
-        (typeof details)["result"]
-      >;
-      const response = plainToInstance(SearchByPlaceNameResponse, {
-        place_name: detailsResult.name,
-        operating_time: detailsResult.opening_hours.weekday_text,
-        latitude: detailsResult.geometry.location.lat,
-        longtitude: detailsResult.geometry.location.lng,
-        address: detailsResult.formatted_address,
-        tel: detailsResult.formatted_phone_number,
-      });
+      const detailsResult = {
+        place_name: details.result.name,
+        operating_time: details.result.opening_hours?.weekday_text,
+        latitude: details.result.geometry?.location.lat,
+        longtitude: details.result.geometry?.location.lng,
+        address: details.result.formatted_address,
+        tel: details.result.formatted_phone_number,
+      }
 
       console.log(details);
-      console.log(response);
-      return res.status(200).json(instanceToPlain(response)).end();
+      console.log(detailsResult);
+      return res.status(200).json(detailsResult).end();
     } catch (err) {
       console.log(err);
       return res.status(500).json({ error: `failed to get place id` }).end();
