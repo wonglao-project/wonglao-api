@@ -100,7 +100,7 @@ async function main() {
   placeRouter.get("/", handlerPlace.getPlaceId.bind(handlerPlace))
   placeRouter.get("/detail", handlerPlace.getPlaceDetail.bind(handlerPlace))
 
-  Google Service API
+  // Google Service API
   serviceRouter.get(
     "/places/search",
     handlerGoogleService.getPlaceIdandPlaceDetail.bind(handlerGoogleService)
