@@ -63,30 +63,30 @@ class CreateContentRequest {
   imges!: string[];
 }
 
-class UpdateContentRequest {
-  @IsNotEmpty()
-  operating_time!: string;
+// class UpdateContentRequest {
+//   @IsNotEmpty()
+//   operating_time!: string;
 
-  @IsNotEmpty()
-  description!: string;
+//   @IsNotEmpty()
+//   description!: string;
 
-  @IsNotEmpty()
-  address!: string;
+//   @IsNotEmpty()
+//   address!: string;
 
-  @IsNotEmpty()
-  tel!: string;
+//   @IsNotEmpty()
+//   tel!: string;
 
-  @IsNotEmpty()
-  email!: string;
+//   @IsNotEmpty()
+//   email!: string;
 
-  @IsNotEmpty()
-  @IsIn(["Bar", "Brewer"])
-  category!: string;
+//   @IsNotEmpty()
+//   @IsIn(["Bar", "Brewer"])
+//   category!: string;
 
-  @IsNotEmpty({ each: true })
-  @IsArray()
-  image!: string[];
-}
+//   @IsNotEmpty({ each: true })
+//   @IsArray()
+//   imges!: string[];
+// }
 
 class HandlerContent {
   private readonly repo: IRepositoryContent;
@@ -202,25 +202,26 @@ class HandlerContent {
     req: JwtAuthRequest<WithId, WithMsg>,
     res: Response
   ): Promise<Response> {
-    const userId = req.payload.id;
-    const body = { ...req.body, userId };
-    console.log(userId, body);
-    const validateBody = plainToInstance(UpdateContentRequest, body);
-    const validationErrors = await validate(validateBody);
-    console.log(validationErrors);
-    if (validationErrors.length > 0) {
-      return res.status(400).json(validationErrors);
-    }
+    // const userId = req.payload.id;
+    // const body = { ...req.body, userId };
 
-    if (!req.params.id) {
-      return res.status(400).json({ error: `missing id in params` }).end();
-    }
     const id = Number(req.params.id);
     if (isNaN(id)) {
       return res
         .status(400)
         .json({ error: `id ${req.params.id} is not a number` });
     }
+
+    if (!req.params.id) {
+      return res.status(400).json({ error: `missing id in params` }).end();
+    }
+
+    // const validateBody = plainToInstance(UpdateContentRequest,Body);
+    // const validationErrors = await validate(validateBody);
+
+    // if (validationErrors.length > 0) {
+    //   return res.status(400).json(validationErrors);
+    // }
 
     const {
       operating_time,
