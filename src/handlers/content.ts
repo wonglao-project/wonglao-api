@@ -1,17 +1,6 @@
 import { Request, Response } from "express";
 import { IRepositoryContent } from "../repositories";
 import { SellerCategory } from "../entities/content";
-import {
-  IsArray,
-  IsEmail,
-  IsIn,
-  IsLatitude,
-  IsLongitude,
-  IsNotEmpty,
-  IsString,
-  validate,
-} from "class-validator";
-import { Expose, plainToInstance } from "class-transformer";
 import { JwtAuthRequest } from "../auth/jwt";
 import { Empty, WithId, WithMsg } from ".";
 
@@ -19,45 +8,45 @@ export function newHandlerContent(repo: IRepositoryContent) {
   return new HandlerContent(repo);
 }
 
-class CreateContentRequest {
-  @IsNotEmpty()
-  userId!: string;
+// class CreateContentRequest {
+//   @IsNotEmpty()
+//   userId!: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @Expose({ name: "place_name" })
-  place_name!: string;
+//   @IsString()
+//   @IsNotEmpty()
+//   @Expose({ name: "place_name" })
+//   place_name!: string;
 
-  @IsArray()
-  @IsString({ each: true })
-  operating_time!: string[];
+//   @IsArray()
+//   @IsString({ each: true })
+//   operating_time!: string[];
 
-  @IsString()
-  description!: string;
+//   @IsString()
+//   description!: string;
 
-  @IsLatitude()
-  latitude!: number;
+//   @IsLatitude()
+//   latitude!: number;
 
-  @IsLongitude()
-  longitude!: number;
+//   @IsLongitude()
+//   longitude!: number;
 
-  @IsString()
-  address!: string;
+//   @IsString()
+//   address!: string;
 
-  @IsString()
-  tel!: string;
+//   @IsString()
+//   tel!: string;
 
-  @IsEmail()
-  email!: string;
+//   @IsEmail()
+//   email!: string;
 
-  @IsString()
-  @IsIn(["Bar", "Brewer"])
-  category!: string;
+//   @IsString()
+//   @IsIn(["Bar", "Brewer"])
+//   category!: string;
 
-  @IsString({ each: true })
-  @IsArray()
-  imges!: string[];
-}
+//   @IsString({ each: true })
+//   @IsArray()
+//   imges!: string[];
+// }
 
 class HandlerContent {
   private readonly repo: IRepositoryContent;
@@ -73,26 +62,29 @@ class HandlerContent {
     const userId = req.payload.id;
     const body = { ...req.body, userId };
 
-    const validateBody = plainToInstance(CreateContentRequest, body);
-    const validationErrors = await validate(validateBody);
-    console.log(validationErrors);
-    if (validationErrors.length > 0) {
-      return res.status(400).json(validationErrors);
+    // const body = plainToInstance(CreateContentRequest, body);
+    // const validationErrors = await validate(body);
+    // console.log(validationErrors);
+    // if (validationErrors.length > 0) {
+    //   return res.status(400).json(validationErrors);
+    // }
+    if(!body){
+      return res.status(400).json({error: `no body in req`})
     }
 
     try {
       const createdContent = await this.repo.createContent({
-        userId: validateBody.userId,
-        place_name: validateBody.place_name,
-        operating_time: validateBody.operating_time,
-        description: validateBody.description,
-        latitude: validateBody.latitude,
-        longitude: validateBody.longitude,
-        address: validateBody.address,
-        tel: validateBody.tel,
-        email: validateBody.email,
-        category: this.convertStringToSellerCategory(validateBody.category),
-        images: validateBody.imges,
+        userId: body.userId,
+        place_name: body.place_name,
+        operating_time: body.operating_time,
+        description: body.description,
+        latitude: body.latitude,
+        longitude: body.longitude,
+        address: body.address,
+        tel: body.tel,
+        email: body.email,
+        category: this.convertStringToSellerCategory(body.category),
+        images: body.imges,
       });
 
       console.log(createdContent);

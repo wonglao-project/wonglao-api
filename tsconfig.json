@@ -8,8 +8,7 @@
     "strictNullChecks": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
-    "outDir": "dist",
-    "experimentalDecorators": true
+    "outDir": "dist"
   },
-  "include": ["src/**/*", "index.js"]
+  "include": ["src/**/*"]
 }
