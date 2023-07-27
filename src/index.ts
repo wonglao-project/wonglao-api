@@ -17,7 +17,7 @@ import { HandlerMiddleware } from "./auth/jwt";
 
 async function main() {
   const db = new PrismaClient();
-  // const client = new Client();
+  const client = new Client();
   const redis = createClient();
 
   try {
@@ -31,7 +31,6 @@ async function main() {
   const repoContent = newRepositoryContent(db);
   const handlerContent = newHandlerContent(repoContent);
 
-  const handlerPlace = newHandlerPlace()
   const googleApiService = newGoogleApiService(client);
   const handlerGoogleService = newHandlerGoogleService(googleApiService);
 
@@ -52,11 +51,9 @@ async function main() {
   server.use("/user", userRouter);
 
   const contentRouter = express.Router();
-  // const placeRouter = express.Router()
   const serviceRouter = express.Router();
 
   server.use("/content", contentRouter);
-  // server.use("/place", placeRouter)
   server.use("/service", serviceRouter);
 
   //เรียก middleware
@@ -85,10 +82,9 @@ async function main() {
   contentRouter.get("/:id", handlerContent.getContentById.bind(handlerContent));
   contentRouter.patch(
     "/update/:id",
-    handlerMiddleware.jwtMiddleware.bind(handlerMiddleware)
-      handlerContent.updateUserContent.bind(handlerContent)
-    );
-  
+    handlerMiddleware.jwtMiddleware.bind(handlerMiddleware),
+    handlerContent.updateUserContent.bind(handlerContent)
+  );
 
   contentRouter.delete(
     "/:id",
@@ -96,15 +92,11 @@ async function main() {
     handlerContent.deleteContent.bind(handlerContent)
   );
 
-  // Place API
-  placeRouter.get("/", handlerPlace.getPlaceId.bind(handlerPlace))
-  placeRouter.get("/detail", handlerPlace.getPlaceDetail.bind(handlerPlace))
-
   // Google Service API
   serviceRouter.get(
     "/places/search",
     handlerGoogleService.getPlaceIdandPlaceDetail.bind(handlerGoogleService)
-  )
+  );
 
   server.listen(port, () => console.log(`server is listening on ${port}`));
 }

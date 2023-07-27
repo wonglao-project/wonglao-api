@@ -5,6 +5,14 @@ export interface IHanderContent {
   createContent(req: Request, res: Response): Promise<Response>;
   getContents(req: Request, res: Response): Promise<Response>;
   getContentById(req: Request, res: Response): Promise<Response>;
+  updateUserContent(
+    req: JwtAuthRequest<WithId, WithMsg>,
+    res: Response
+  ): Promise<Response>;
+  deleteContent(
+    req: JwtAuthRequest<WithId, WithMsg>,
+    res: Response
+  ): Promise<Response>;
 }
 
 export interface IHandlerGoogleService {

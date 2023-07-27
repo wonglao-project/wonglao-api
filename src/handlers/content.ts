@@ -54,10 +54,6 @@ class CreateContentRequest {
   @IsIn(["Bar", "Brewer"])
   category!: string;
 
-  // @IsString()
-  // @IsIn(["Gin", "Rum", "WhiteSpirit"])
-  // product_category!: string;
-
   @IsString({ each: true })
   @IsArray()
   imges!: string[];
@@ -121,22 +117,6 @@ class HandlerContent {
     }
   }
 
-  // private convertStringToProductCategory(pc: string): ProductCategory {
-  //   switch (pc) {
-  //     case "Gin":
-  //       return ProductCategory.Gin;
-
-  //     case "Rum":
-  //       return ProductCategory.Rum;
-
-  //     case "WhiteSpirit":
-  //       return ProductCategory.WhiteSpirit;
-
-  //     default:
-  //       throw new Error(`${pc} is not a valid ProductCategory`);
-  //   }
-  // }
-
   async getContents(req: Request, res: Response): Promise<Response> {
     try {
       const contents = await this.repo.getContents();
@@ -172,6 +152,7 @@ class HandlerContent {
         return res.status(500).json({ error: errMsg });
       });
   }
+
   async deleteContent(
     req: JwtAuthRequest<WithId, WithMsg>,
     res: Response
@@ -197,6 +178,66 @@ class HandlerContent {
         return res
           .status(500)
           .json({ error: `failed to delete content ${id}` });
+      });
+  }
+
+  async updateUserContent(
+    req: JwtAuthRequest<WithId, WithMsg>,
+    res: Response
+  ): Promise<Response> {
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+      return res
+        .status(400)
+        .json({ error: `id ${req.params.id} is not a number` });
+    }
+
+    if (!req.params.id) {
+      return res.status(400).json({ error: `missing id in params` }).end();
+    }
+
+    const {
+      operating_time,
+      description,
+      address,
+      tel,
+      email,
+      category,
+      product_category,
+      images,
+    } = req.body;
+
+    if (
+      !operating_time ||
+      !description ||
+      !address ||
+      !tel ||
+      !email ||
+      !category ||
+      !product_category ||
+      !images
+    ) {
+      return res.status(400).json({ error: "missing msg in json body" }).end();
+    }
+
+    return this.repo
+      .updateUserContent({
+        id,
+        userId: req.payload.id,
+        operating_time,
+        description,
+        address,
+        tel,
+        email,
+        category,
+        product_category,
+        images,
+      })
+      .then((updated) => res.status(201).json(updated).end())
+      .catch((err) => {
+        const errMsg = `failed to update content ${id}: ${err}`;
+        console.error(errMsg);
+        return res.status(500).json({ error: errMsg }).end();
       });
   }
 }
