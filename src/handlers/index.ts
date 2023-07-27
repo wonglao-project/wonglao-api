@@ -9,6 +9,10 @@ export interface IHanderContent {
     req: JwtAuthRequest<WithId, WithMsg>,
     res: Response
   ): Promise<Response>;
+  deleteContent(
+    req: JwtAuthRequest<WithId, WithMsg>,
+    res: Response
+  ): Promise<Response>;
 }
 
 export interface IHandlerGoogleService {

@@ -5,4 +5,5 @@ export interface IRepositoryContent {
   getContents(): Promise<IContent[]>;
   getContentById(id: number): Promise<IContent | null>;
   updateUserContent(arg: IUpdate): Promise<IContent>;
+  deleteUserContent(id: number): Promise<ICreateContent>;
 }

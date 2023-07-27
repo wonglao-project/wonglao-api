@@ -31,7 +31,6 @@ async function main() {
   const repoContent = newRepositoryContent(db);
   const handlerContent = newHandlerContent(repoContent);
 
-  // const handlerPlace = newHandlerPlace()
   const googleApiService = newGoogleApiService(client);
   const handlerGoogleService = newHandlerGoogleService(googleApiService);
 
@@ -52,11 +51,9 @@ async function main() {
   server.use("/user", userRouter);
 
   const contentRouter = express.Router();
-  // const placeRouter = express.Router()
   const serviceRouter = express.Router();
 
   server.use("/content", contentRouter);
-  // server.use("/place", placeRouter)
   server.use("/service", serviceRouter);
 
   //เรียก middleware
@@ -89,11 +86,13 @@ async function main() {
     handlerContent.updateUserContent.bind(handlerContent)
   );
 
-  // Place API
-  // placeRouter.get("/", handlerPlace.getPlaceId.bind(handlerPlace))
-  // placeRouter.get("/detail", handlerPlace.getPlaceDetail.bind(handlerPlace))
+  contentRouter.delete(
+    "/:id",
+    handlerMiddleware.jwtMiddleware.bind(handlerMiddleware),
+    handlerContent.deleteContent.bind(handlerContent)
+  );
 
-  //Google Service API
+  // Google Service API
   serviceRouter.get(
     "/places/search",
     handlerGoogleService.getPlaceIdandPlaceDetail.bind(handlerGoogleService)

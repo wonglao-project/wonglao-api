@@ -54,39 +54,10 @@ class CreateContentRequest {
   @IsIn(["Bar", "Brewer"])
   category!: string;
 
-  // @IsString()
-  // @IsIn(["Gin", "Rum", "WhiteSpirit"])
-  // product_category!: string;
-
   @IsString({ each: true })
   @IsArray()
   imges!: string[];
 }
-
-// class UpdateContentRequest {
-//   @IsNotEmpty()
-//   operating_time!: string;
-
-//   @IsNotEmpty()
-//   description!: string;
-
-//   @IsNotEmpty()
-//   address!: string;
-
-//   @IsNotEmpty()
-//   tel!: string;
-
-//   @IsNotEmpty()
-//   email!: string;
-
-//   @IsNotEmpty()
-//   @IsIn(["Bar", "Brewer"])
-//   category!: string;
-
-//   @IsNotEmpty({ each: true })
-//   @IsArray()
-//   imges!: string[];
-// }
 
 class HandlerContent {
   private readonly repo: IRepositoryContent;
@@ -146,22 +117,6 @@ class HandlerContent {
     }
   }
 
-  // private convertStringToProductCategory(pc: string): ProductCategory {
-  //   switch (pc) {
-  //     case "Gin":
-  //       return ProductCategory.Gin;
-
-  //     case "Rum":
-  //       return ProductCategory.Rum;
-
-  //     case "WhiteSpirit":
-  //       return ProductCategory.WhiteSpirit;
-
-  //     default:
-  //       throw new Error(`${pc} is not a valid ProductCategory`);
-  //   }
-  // }
-
   async getContents(req: Request, res: Response): Promise<Response> {
     try {
       const contents = await this.repo.getContents();
@@ -198,13 +153,38 @@ class HandlerContent {
       });
   }
 
+  async deleteContent(
+    req: JwtAuthRequest<WithId, WithMsg>,
+    res: Response
+  ): Promise<Response> {
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+      return res
+        .status(400)
+        .json({ error: `id: ${req.params.id} is not a number` });
+    }
+
+    return this.repo
+      .deleteUserContent(id)
+      .then((deleted) =>
+        res
+          .status(200)
+          .json({ status: `deleted content id: ${id}` })
+          .end()
+      )
+
+      .catch((err) => {
+        console.error(`failed to delete content ${id} : ${err}`);
+        return res
+          .status(500)
+          .json({ error: `failed to delete content ${id}` });
+      });
+  }
+
   async updateUserContent(
     req: JwtAuthRequest<WithId, WithMsg>,
     res: Response
   ): Promise<Response> {
-    // const userId = req.payload.id;
-    // const body = { ...req.body, userId };
-
     const id = Number(req.params.id);
     if (isNaN(id)) {
       return res
@@ -215,13 +195,6 @@ class HandlerContent {
     if (!req.params.id) {
       return res.status(400).json({ error: `missing id in params` }).end();
     }
-
-    // const validateBody = plainToInstance(UpdateContentRequest,Body);
-    // const validationErrors = await validate(validateBody);
-
-    // if (validationErrors.length > 0) {
-    //   return res.status(400).json(validationErrors);
-    // }
 
     const {
       operating_time,
