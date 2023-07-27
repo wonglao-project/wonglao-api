@@ -89,6 +89,12 @@ async function main() {
     handlerGoogleService.getPlaceIdandPlaceDetail.bind(handlerGoogleService)
   );
 
+  //S3 Upload API
+  serviceRouter.post(
+    "/upload/images",
+    
+  )
+
   server.listen(port, () => console.log(`server is listening on ${port}`));
 }
 
