@@ -13,6 +13,7 @@ model User {
     password    String
     name        String
     sellers     Seller[]
+    products     Product[]
 }
 
 model Product {
@@ -23,6 +24,8 @@ model Product {
     seller           Seller          @relation(fields: [sellerId], references: [id])
     sellerId         Int
     images           String[]
+    user           User           @relation(fields: [userId], references: [id])
+    userId         String 
 }
 
 enum SellerCategory {
