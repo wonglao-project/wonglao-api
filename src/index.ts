@@ -87,12 +87,6 @@ async function main() {
     handlerContent.updateUserContent.bind(handlerContent)
   );
 
-  contentRouter.delete(
-    "/:id",
-    handlerMiddleware.jwtMiddleware.bind(handlerMiddleware),
-    handlerContent.deleteContent.bind(handlerContent)
-  );
-
   // Google Service API
   serviceRouter.get(
     "/places/search",

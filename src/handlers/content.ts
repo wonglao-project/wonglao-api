@@ -8,46 +8,6 @@ export function newHandlerContent(repo: IRepositoryContent) {
   return new HandlerContent(repo);
 }
 
-// class CreateContentRequest {
-//   @IsNotEmpty()
-//   userId!: string;
-
-//   @IsString()
-//   @IsNotEmpty()
-//   @Expose({ name: "place_name" })
-//   place_name!: string;
-
-//   @IsArray()
-//   @IsString({ each: true })
-//   operating_time!: string[];
-
-//   @IsString()
-//   description!: string;
-
-//   @IsLatitude()
-//   latitude!: number;
-
-//   @IsLongitude()
-//   longitude!: number;
-
-//   @IsString()
-//   address!: string;
-
-//   @IsString()
-//   tel!: string;
-
-//   @IsEmail()
-//   email!: string;
-
-//   @IsString()
-//   @IsIn(["Bar", "Brewer"])
-//   category!: string;
-
-//   @IsString({ each: true })
-//   @IsArray()
-//   imges!: string[];
-// }
-
 class HandlerContent {
   private readonly repo: IRepositoryContent;
 
@@ -62,14 +22,8 @@ class HandlerContent {
     const userId = req.payload.id;
     const body = { ...req.body, userId };
 
-    // const body = plainToInstance(CreateContentRequest, body);
-    // const validationErrors = await validate(body);
-    // console.log(validationErrors);
-    // if (validationErrors.length > 0) {
-    //   return res.status(400).json(validationErrors);
-    // }
-    if(!body){
-      return res.status(400).json({error: `no body in req`})
+    if (!body) {
+      return res.status(400).json({ error: `no body in req` });
     }
 
     try {
@@ -142,34 +96,6 @@ class HandlerContent {
         const errMsg = `failed to get content ${id}: ${err}`;
         console.error(errMsg);
         return res.status(500).json({ error: errMsg });
-      });
-  }
-
-  async deleteContent(
-    req: JwtAuthRequest<WithId, WithMsg>,
-    res: Response
-  ): Promise<Response> {
-    const id = Number(req.params.id);
-    if (isNaN(id)) {
-      return res
-        .status(400)
-        .json({ error: `id: ${req.params.id} is not a number` });
-    }
-
-    return this.repo
-      .deleteUserContent(id)
-      .then((deleted) =>
-        res
-          .status(200)
-          .json({ status: `deleted content id: ${id}` })
-          .end()
-      )
-
-      .catch((err) => {
-        console.error(`failed to delete content ${id} : ${err}`);
-        return res
-          .status(500)
-          .json({ error: `failed to delete content ${id}` });
       });
   }
 
