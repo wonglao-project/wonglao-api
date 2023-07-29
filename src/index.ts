@@ -19,9 +19,9 @@ async function main() {
   const googlePlaceClient = new Client();
 
   // redis://host:port
-  const redisHost = process.env.REDIS_HOST
-  const redisPort = process.env.REDIS_PORT
-  const redis = createClient({url: `redis://${redisHost}:${redisPort}`});
+  const redisHost = process.env.REDIS_HOST;
+  const redisPort = process.env.REDIS_PORT;
+  const redis = createClient({ url: `redis://${redisHost}:${redisPort}` });
 
   // try {
   //   redis.connect();
@@ -34,12 +34,7 @@ async function main() {
   const repoContent = newRepositoryContent(db);
   const handlerContent = newHandlerContent(repoContent);
 
-<<<<<<< Updated upstream
-  const googleApiService = newGoogleApiService(client);
-=======
-  // const handlerPlace = newHandlerPlace()
   const googleApiService = newGoogleApiService(googlePlaceClient);
->>>>>>> Stashed changes
   const handlerGoogleService = newHandlerGoogleService(googleApiService);
 
   const repoUser = newRepositoryUser(db);
@@ -63,8 +58,6 @@ async function main() {
 
   server.use("/content", contentRouter);
   server.use("/service", serviceRouter);
-
-  //เรียก middleware
 
   //Check server status
   server.get("/", (_, res) => {
