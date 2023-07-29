@@ -16,21 +16,30 @@ import { HandlerMiddleware } from "./auth/jwt";
 
 async function main() {
   const db = new PrismaClient();
-  const client = new Client();
-  const redis = createClient();
+  const googlePlaceClient = new Client();
 
-  try {
-    redis.connect();
-    db.$connect();
-  } catch (err) {
-    console.error(err);
-    return;
-  }
+  // redis://host:port
+  const redisHost = process.env.REDIS_HOST
+  const redisPort = process.env.REDIS_PORT
+  const redis = createClient({url: `redis://${redisHost}:${redisPort}`});
+
+  // try {
+  //   redis.connect();
+  //   db.$connect();
+  // } catch (err) {
+  //   console.error(err);
+  //   return;
+  // }
 
   const repoContent = newRepositoryContent(db);
   const handlerContent = newHandlerContent(repoContent);
 
+<<<<<<< Updated upstream
   const googleApiService = newGoogleApiService(client);
+=======
+  // const handlerPlace = newHandlerPlace()
+  const googleApiService = newGoogleApiService(googlePlaceClient);
+>>>>>>> Stashed changes
   const handlerGoogleService = newHandlerGoogleService(googleApiService);
 
   const repoUser = newRepositoryUser(db);
