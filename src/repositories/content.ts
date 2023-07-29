@@ -1,5 +1,11 @@
 import { PrismaClient } from "@prisma/client";
-import { ICreateContent, IContent, IUpdate } from "../entities/content";
+import {
+  ICreateContent,
+  IContent,
+  IUpdate,
+  ICreateProduct,
+  IProduct,
+} from "../entities/content";
 import { IRepositoryContent } from ".";
 
 export function newRepositoryContent(db: PrismaClient): IRepositoryContent {
@@ -56,6 +62,41 @@ class RepositoryContent implements IRepositoryContent {
         tel: arg.tel,
         email: arg.email,
         category: arg.category,
+        images: arg.images,
+      },
+    });
+  }
+
+  async createProduct(arg: ICreateProduct): Promise<IProduct> {
+    console.log("arg.sellerId", arg.sellerId);
+    return await this.db.product.create({
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            password: false,
+          },
+        },
+      },
+      data: {
+        userId: undefined,
+        user: {
+          connect: {
+            id: arg.userId,
+          },
+        },
+
+        sellerId: undefined,
+        seller: {
+          connect: {
+            id: arg.sellerId,
+          },
+        },
+        product_name: arg.product_name,
+        product_category: arg.product_category,
+        description: arg.description,
         images: arg.images,
       },
     });

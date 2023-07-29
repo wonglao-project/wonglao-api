@@ -23,13 +23,13 @@ async function main() {
   const redisPort = process.env.REDIS_PORT;
   const redis = createClient({ url: `redis://${redisHost}:${redisPort}` });
 
-  // try {
-  //   redis.connect();
-  //   db.$connect();
-  // } catch (err) {
-  //   console.error(err);
-  //   return;
-  // }
+  try {
+    redis.connect();
+    db.$connect();
+  } catch (err) {
+    console.error(err);
+    return;
+  }
 
   const repoContent = newRepositoryContent(db);
   const handlerContent = newHandlerContent(repoContent);
@@ -51,11 +51,12 @@ async function main() {
   server.use(cors());
 
   const userRouter = express.Router();
-  server.use("/user", userRouter);
-
   const contentRouter = express.Router();
   const serviceRouter = express.Router();
+  const productRouter = express.Router();
 
+  server.use("/user", userRouter);
+  server.use("/product", productRouter);
   server.use("/content", contentRouter);
   server.use("/service", serviceRouter);
 
@@ -85,6 +86,13 @@ async function main() {
     "/update/:id",
     handlerMiddleware.jwtMiddleware.bind(handlerMiddleware),
     handlerContent.updateUserContent.bind(handlerContent)
+  );
+
+  //Product API
+  productRouter.post(
+    "/",
+    handlerMiddleware.jwtMiddleware.bind(handlerMiddleware),
+    handlerContent.createProduct.bind(handlerContent)
   );
 
   // Google Service API

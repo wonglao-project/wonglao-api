@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { IRepositoryContent } from "../repositories";
 import { SellerCategory } from "../entities/content";
 import { JwtAuthRequest } from "../auth/jwt";
-import { Empty, WithId, WithMsg } from ".";
+import { Empty, WithId, WithMsgContent, WithMsgProduct } from ".";
 
 export function newHandlerContent(repo: IRepositoryContent) {
   return new HandlerContent(repo);
@@ -16,7 +16,7 @@ class HandlerContent {
   }
 
   async createContent(
-    req: JwtAuthRequest<Empty, WithMsg>,
+    req: JwtAuthRequest<Empty, WithMsgContent>,
     res: Response
   ): Promise<Response> {
     const userId = req.payload.id;
@@ -46,6 +46,35 @@ class HandlerContent {
       return res.status(201).json(createdContent).end();
     } catch (err) {
       const errMsg = `failed to create content`;
+      return res.status(500).json({ error: errMsg }).end();
+    }
+  }
+
+  async createProduct(
+    req: JwtAuthRequest<Empty, WithMsgProduct>,
+    res: Response
+  ): Promise<Response> {
+    const userId = req.payload.id;
+    const body = { ...req.body, userId };
+
+    if (!body) {
+      return res.status(400).json({ error: `no body in req` });
+    }
+
+    try {
+      const createdProduct = await this.repo.createProduct({
+        userId: body.userId,
+        sellerId: body.sellerId,
+        product_name: body.product_name,
+        product_category: body.product_category,
+        description: body.description,
+        images: body.images,
+      });
+
+      return res.status(201).json(createdProduct).end();
+    } catch (err) {
+      console.log(err);
+      const errMsg = `failed to create product`;
       return res.status(500).json({ error: errMsg }).end();
     }
   }
@@ -100,7 +129,7 @@ class HandlerContent {
   }
 
   async updateUserContent(
-    req: JwtAuthRequest<WithId, WithMsg>,
+    req: JwtAuthRequest<WithId, WithMsgContent>,
     res: Response
   ): Promise<Response> {
     const id = Number(req.params.id);
@@ -148,7 +177,6 @@ class HandlerContent {
         tel,
         email,
         category,
-        product_category,
         images,
       })
       .then((updated) => res.status(201).json(updated).end())
