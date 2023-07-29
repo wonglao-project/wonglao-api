@@ -22,6 +22,7 @@ model Product {
     description      String
     seller           Seller          @relation(fields: [sellerId], references: [id])
     sellerId         Int
+    images           String[]
 }
 
 enum SellerCategory {
