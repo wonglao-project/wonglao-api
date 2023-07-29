@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import {
   ICreateContent,
   IContent,
-  IUpdate,
+  IUpdateContent,
   ICreateProduct,
   IProduct,
 } from "../entities/content";
@@ -106,13 +106,22 @@ class RepositoryContent implements IRepositoryContent {
     return await this.db.seller.findMany();
   }
 
+  async getProducts(): Promise<IProduct[]> {
+    return await this.db.product.findMany();
+  }
   async getContentById(id: number): Promise<IContent | null> {
     return await this.db.seller.findUnique({
       where: { id },
     });
   }
 
-  async updateUserContent(arg: IUpdate): Promise<IContent> {
+  async getProductById(id: number): Promise<IProduct | null> {
+    return await this.db.product.findUnique({
+      where: { id },
+    });
+  }
+
+  async updateUserContent(arg: IUpdateContent): Promise<IContent> {
     const uSeller = await this.db.seller.findUnique({
       where: { id: arg.id },
     });

@@ -1,7 +1,7 @@
 import {
   ICreateContent,
   IContent,
-  IUpdate,
+  IUpdateContent,
   ICreateProduct,
   IProduct,
 } from "../entities/content";
@@ -12,4 +12,6 @@ export interface IRepositoryContent {
   getContents(): Promise<IContent[]>;
   getContentById(id: number): Promise<IContent | null>;
   updateUserContent(arg: IUpdate): Promise<IContent>;
+  getProducts(): Promise<IProduct[]>;
+  getProductById(id: number): Promise<IProduct | null>;
 }

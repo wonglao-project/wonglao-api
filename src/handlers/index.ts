@@ -13,7 +13,8 @@ export interface IHanderContent {
     req: JwtAuthRequest<Empty, WithMsgProduct>,
     res: Response
   ): Promise<Response>;
-  ç;
+  getProducts(req: Request, res: Response): Promise<Response>;
+  getContentById(req: Request, res: Response): Promise<Response>;
 }
 
 export interface IHandlerGoogleService {

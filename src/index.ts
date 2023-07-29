@@ -94,6 +94,8 @@ async function main() {
     handlerMiddleware.jwtMiddleware.bind(handlerMiddleware),
     handlerContent.createProduct.bind(handlerContent)
   );
+  productRouter.get("/", handlerContent.getProducts.bind(handlerContent));
+  productRouter.get("/:id", handlerContent.getProductbyId.bind(handlerContent));
 
   // Google Service API
   serviceRouter.get(

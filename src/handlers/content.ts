@@ -102,6 +102,15 @@ class HandlerContent {
     }
   }
 
+  async getProducts(req: Request, res: Response): Promise<Response> {
+    try {
+      const products = await this.repo.getProducts();
+      return res.status(200).json(products).end();
+    } catch (err) {
+      return res.status(500).json({ error: "failed to get products" }).end();
+    }
+  }
+
   async getContentById(req: Request, res: Response): Promise<Response> {
     const id = Number(req.params.id);
     if (isNaN(id)) {
@@ -124,6 +133,32 @@ class HandlerContent {
       .catch((err) => {
         const errMsg = `failed to get content ${id}: ${err}`;
         console.error(errMsg);
+        return res.status(500).json({ error: errMsg });
+      });
+  }
+
+  async getProductbyId(req: Request, res: Response): Promise<Response> {
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+      return res
+        .status(400)
+        .json({ error: `id ${req.params.id} is not a number` });
+    }
+
+    return this.repo
+      .getProductById(id)
+      .then((product) => {
+        if (!product) {
+          return res
+            .status(404)
+            .json({ error: `no product : ${id}` })
+            .end();
+        }
+
+        return res.status(200).json(product).end();
+      })
+      .catch((err) => {
+        const errMsg = `failed to get product ${id}: ${err}`;
         return res.status(500).json({ error: errMsg });
       });
   }
