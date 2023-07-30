@@ -32,7 +32,7 @@ export interface IContent extends ICreateContent {
   id: number;
 }
 
-export interface IUpdate {
+export interface IUpdateContent {
   id: number;
   userId: string;
   operating_time: string[];

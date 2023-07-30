@@ -11,7 +11,8 @@ export interface IRepositoryContent {
   createProduct(arg: ICreateProduct): Promise<IProduct>;
   getContents(): Promise<IContent[]>;
   getContentById(id: number): Promise<IContent | null>;
-  updateUserContent(arg: IUpdate): Promise<IContent>;
+  updateUserContent(arg: IUpdateContent): Promise<IContent>;
   getProducts(): Promise<IProduct[]>;
   getProductById(id: number): Promise<IProduct | null>;
+  updateUserProduct(arg: IProduct): Promise<IProduct>;
 }

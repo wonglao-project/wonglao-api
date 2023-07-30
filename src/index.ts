@@ -96,6 +96,11 @@ async function main() {
   );
   productRouter.get("/", handlerContent.getProducts.bind(handlerContent));
   productRouter.get("/:id", handlerContent.getProductbyId.bind(handlerContent));
+  productRouter.patch(
+    "/update/:id",
+    handlerMiddleware.jwtMiddleware.bind(handlerMiddleware),
+    handlerContent.updateUserProduct.bind(handlerContent)
+  );
 
   // Google Service API
   serviceRouter.get(

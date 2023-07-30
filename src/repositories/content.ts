@@ -147,24 +147,28 @@ class RepositoryContent implements IRepositoryContent {
       },
     });
   }
+
+  async updateUserProduct(arg: IProduct): Promise<IProduct> {
+    const uProduct = await this.db.product.findUnique({
+      where: { id: arg.id },
+    });
+
+    if (!uProduct) {
+      return Promise.reject(`no product ${arg.id}`);
+    }
+
+    if (uProduct.userId !== arg.userId) {
+      return Promise.reject(`bad ownerId : ${arg.userId}`);
+    }
+
+    return await this.db.product.update({
+      where: { id: arg.id },
+      data: {
+        product_name: arg.product_name,
+        product_category: arg.product_category,
+        description: arg.description,
+        images: arg.images,
+      },
+    });
+  }
 }
-// private convertToPrismaCategory(sc: SellerCategory): PrismaSellerCategory {
-//   switch (sc) {
-//     case SellerCategory.Bar:
-//       return "Bar";
-//     case SellerCategory.Brewer:
-//       return "Brewer";
-//   }
-// }
-// private convertToPrismaProductCategory(
-//   pc: ProductCategory
-// ): PrismaProductCategory {
-//   switch (pc) {
-//     case ProductCategory.Gin:
-//       return "Gin";
-//     case ProductCategory.Rum:
-//       return "Rum";
-//     case ProductCategory.WhiteSpirit:
-//       return "WhiteSpirit";
-//   }
-// }

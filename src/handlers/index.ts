@@ -15,6 +15,10 @@ export interface IHanderContent {
   ): Promise<Response>;
   getProducts(req: Request, res: Response): Promise<Response>;
   getContentById(req: Request, res: Response): Promise<Response>;
+  updateUserProduct(
+    req: JwtAuthRequest<WithId, WithMsgProduct>,
+    res: Response
+  ): Promise<Response>;
 }
 
 export interface IHandlerGoogleService {
@@ -68,6 +72,7 @@ export interface WithMsgContent {
 }
 
 export interface WithMsgProduct {
+  sellerId: number;
   product_name: string;
   product_category: string;
   description: string;

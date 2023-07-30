@@ -221,4 +221,49 @@ class HandlerContent {
         return res.status(500).json({ error: errMsg }).end();
       });
   }
+
+  async updateUserProduct(
+    req: JwtAuthRequest<WithId, WithMsgProduct>,
+    res: Response
+  ): Promise<Response> {
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+      return res
+        .status(400)
+        .json({ error: `id ${req.params.id} is not a number` });
+    }
+
+    if (!req.params.id) {
+      return res.status(400).json({ error: `missing id in params` }).end();
+    }
+
+    const { sellerId, product_name, product_category, description, images } =
+      req.body;
+
+    if (
+      !sellerId ||
+      !product_name ||
+      !product_category ||
+      !description ||
+      !images
+    ) {
+      return res.status(400).json({ error: "missing msg in json body" }).end();
+    }
+
+    return this.repo
+      .updateUserProduct({
+        id,
+        sellerId,
+        userId: req.payload.id,
+        product_name,
+        product_category,
+        description,
+        images,
+      })
+      .then((updated) => res.status(201).json(updated).end())
+      .catch((err) => {
+        const errMsg = `failed to update product ${id}: ${err}`;
+        return res.status(500).json({ error: errMsg }).end();
+      });
+  }
 }
