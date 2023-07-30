@@ -46,7 +46,7 @@ class HandlerGoogleService implements IHandlerGoogleService {
         place_name: details.result.name,
         operating_time: details.result.opening_hours?.weekday_text,
         latitude: details.result.geometry?.location.lat,
-        longtitude: details.result.geometry?.location.lng,
+        longitude: details.result.geometry?.location.lng,
         address: details.result.formatted_address,
         tel: details.result.formatted_phone_number,
       }

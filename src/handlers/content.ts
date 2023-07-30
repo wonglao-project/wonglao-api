@@ -20,15 +20,17 @@ class HandlerContent {
     res: Response
   ): Promise<Response> {
     const userId = req.payload.id;
-    const body = { ...req.body, userId };
+    const body = { ...req.body };
 
     if (!body) {
       return res.status(400).json({ error: `no body in req` });
     }
 
+    console.log("body", body)
+
     try {
       const createdContent = await this.repo.createContent({
-        userId: body.userId,
+        userId: userId,
         place_name: body.place_name,
         operating_time: body.operating_time,
         description: body.description,
@@ -38,10 +40,10 @@ class HandlerContent {
         tel: body.tel,
         email: body.email,
         category: this.convertStringToSellerCategory(body.category),
-        images: body.imges,
+        images: body.images,
       });
 
-      console.log(createdContent);
+      console.log("createdContent", createdContent);
 
       return res.status(201).json(createdContent).end();
     } catch (err) {
