@@ -23,23 +23,19 @@ async function main() {
   const redisPort = process.env.REDIS_PORT
   const redis = createClient({url: `redis://${redisHost}:${redisPort}`});
 
-  // try {
-  //   redis.connect();
-  //   db.$connect();
-  // } catch (err) {
-  //   console.error(err);
-  //   return;
-  // }
+  try {
+    redis.connect();
+    db.$connect();
+  } catch (err) {
+    console.error(err);
+    return;
+  }
 
   const repoContent = newRepositoryContent(db);
   const handlerContent = newHandlerContent(repoContent);
 
-<<<<<<< Updated upstream
-  const googleApiService = newGoogleApiService(client);
-=======
   // const handlerPlace = newHandlerPlace()
   const googleApiService = newGoogleApiService(googlePlaceClient);
->>>>>>> Stashed changes
   const handlerGoogleService = newHandlerGoogleService(googleApiService);
 
   const repoUser = newRepositoryUser(db);
