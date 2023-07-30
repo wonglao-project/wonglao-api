@@ -1,5 +1,11 @@
 import { PrismaClient } from "@prisma/client";
-import { ICreateContent, IContent, IUpdate } from "../entities/content";
+import {
+  ICreateContent,
+  IContent,
+  IUpdateContent,
+  ICreateProduct,
+  IProduct,
+} from "../entities/content";
 import { IRepositoryContent } from ".";
 
 export function newRepositoryContent(db: PrismaClient): IRepositoryContent {
@@ -61,17 +67,61 @@ class RepositoryContent implements IRepositoryContent {
     });
   }
 
+  async createProduct(arg: ICreateProduct): Promise<IProduct> {
+    console.log("arg.sellerId", arg.sellerId);
+    return await this.db.product.create({
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            password: false,
+          },
+        },
+      },
+      data: {
+        userId: undefined,
+        user: {
+          connect: {
+            id: arg.userId,
+          },
+        },
+
+        sellerId: undefined,
+        seller: {
+          connect: {
+            id: arg.sellerId,
+          },
+        },
+        product_name: arg.product_name,
+        product_category: arg.product_category,
+        description: arg.description,
+        images: arg.images,
+      },
+    });
+  }
+
   async getContents(): Promise<IContent[]> {
     return await this.db.seller.findMany();
   }
 
+  async getProducts(): Promise<IProduct[]> {
+    return await this.db.product.findMany();
+  }
   async getContentById(id: number): Promise<IContent | null> {
     return await this.db.seller.findUnique({
       where: { id },
     });
   }
 
-  async updateUserContent(arg: IUpdate): Promise<IContent> {
+  async getProductById(id: number): Promise<IProduct | null> {
+    return await this.db.product.findUnique({
+      where: { id },
+    });
+  }
+
+  async updateUserContent(arg: IUpdateContent): Promise<IContent> {
     const uSeller = await this.db.seller.findUnique({
       where: { id: arg.id },
     });
@@ -98,34 +148,27 @@ class RepositoryContent implements IRepositoryContent {
     });
   }
 
-  async deleteUserContent(id: number): Promise<ICreateContent> {
-    const content = await this.db.seller.findFirst({
-      where: { id },
+  async updateUserProduct(arg: IProduct): Promise<IProduct> {
+    const uProduct = await this.db.product.findUnique({
+      where: { id: arg.id },
     });
-    if (!content) {
-      return Promise.reject(`no such content : ${id}`);
+
+    if (!uProduct) {
+      return Promise.reject(`no product ${arg.id}`);
     }
 
-    return await this.db.seller.delete({ where: { id } });
+    if (uProduct.userId !== arg.userId) {
+      return Promise.reject(`bad ownerId : ${arg.userId}`);
+    }
+
+    return await this.db.product.update({
+      where: { id: arg.id },
+      data: {
+        product_name: arg.product_name,
+        product_category: arg.product_category,
+        description: arg.description,
+        images: arg.images,
+      },
+    });
   }
 }
-// private convertToPrismaCategory(sc: SellerCategory): PrismaSellerCategory {
-//   switch (sc) {
-//     case SellerCategory.Bar:
-//       return "Bar";
-//     case SellerCategory.Brewer:
-//       return "Brewer";
-//   }
-// }
-// private convertToPrismaProductCategory(
-//   pc: ProductCategory
-// ): PrismaProductCategory {
-//   switch (pc) {
-//     case ProductCategory.Gin:
-//       return "Gin";
-//     case ProductCategory.Rum:
-//       return "Rum";
-//     case ProductCategory.WhiteSpirit:
-//       return "WhiteSpirit";
-//   }
-// }

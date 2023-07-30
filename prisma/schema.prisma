@@ -12,34 +12,20 @@ model User {
     username    String       @unique
     password    String
     name        String
-    favSellers  FavSeller[]
-    favProducts FavProduct[]
     sellers     Seller[]
-}
-
-model FavSeller {
-    id       Int    @id @unique @default(autoincrement())
-    seller   Seller @relation(fields: [sellerId], references: [id])
-    sellerId Int
-    user     User   @relation(fields: [userId], references: [id])
-    userId   String
-}
-
-model FavProduct {
-    id        Int     @id @unique @default(autoincrement())
-    product   Product @relation(fields: [productId], references: [id])
-    productId Int
-    user      User    @relation(fields: [userId], references: [id])
-    userId    String
+    products     Product[]
 }
 
 model Product {
     id               Int             @id @default(autoincrement())
-    description      String
+    product_name     String
     product_category ProductCategory
-    favProduct       FavProduct[]
+    description      String
     seller           Seller          @relation(fields: [sellerId], references: [id])
     sellerId         Int
+    images           String[]
+    user           User           @relation(fields: [userId], references: [id])
+    userId         String 
 }
 
 enum SellerCategory {
@@ -67,6 +53,5 @@ model Seller {
     images         String[]
     user           User           @relation(fields: [userId], references: [id])
     userId         String
-    favSellers     FavSeller[]
     products       Product[]
 }

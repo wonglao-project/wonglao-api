@@ -19,9 +19,9 @@ async function main() {
   const googlePlaceClient = new Client();
 
   // redis://host:port
-  const redisHost = process.env.REDIS_HOST
-  const redisPort = process.env.REDIS_PORT
-  const redis = createClient({url: `redis://${redisHost}:${redisPort}`});
+  const redisHost = process.env.REDIS_HOST;
+  const redisPort = process.env.REDIS_PORT;
+  const redis = createClient({ url: `redis://${redisHost}:${redisPort}` });
 
   try {
     redis.connect();
@@ -34,7 +34,6 @@ async function main() {
   const repoContent = newRepositoryContent(db);
   const handlerContent = newHandlerContent(repoContent);
 
-  // const handlerPlace = newHandlerPlace()
   const googleApiService = newGoogleApiService(googlePlaceClient);
   const handlerGoogleService = newHandlerGoogleService(googleApiService);
 
@@ -52,15 +51,14 @@ async function main() {
   server.use(cors());
 
   const userRouter = express.Router();
-  server.use("/user", userRouter);
-
   const contentRouter = express.Router();
   const serviceRouter = express.Router();
+  const productRouter = express.Router();
 
+  server.use("/user", userRouter);
+  server.use("/product", productRouter);
   server.use("/content", contentRouter);
   server.use("/service", serviceRouter);
-
-  //เรียก middleware
 
   //Check server status
   server.get("/", (_, res) => {
@@ -90,10 +88,18 @@ async function main() {
     handlerContent.updateUserContent.bind(handlerContent)
   );
 
-  contentRouter.delete(
-    "/:id",
+  //Product API
+  productRouter.post(
+    "/",
     handlerMiddleware.jwtMiddleware.bind(handlerMiddleware),
-    handlerContent.deleteContent.bind(handlerContent)
+    handlerContent.createProduct.bind(handlerContent)
+  );
+  productRouter.get("/", handlerContent.getProducts.bind(handlerContent));
+  productRouter.get("/:id", handlerContent.getProductbyId.bind(handlerContent));
+  productRouter.patch(
+    "/update/:id",
+    handlerMiddleware.jwtMiddleware.bind(handlerMiddleware),
+    handlerContent.updateUserProduct.bind(handlerContent)
   );
 
   // Google Service API

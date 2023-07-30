@@ -2,51 +2,11 @@ import { Request, Response } from "express";
 import { IRepositoryContent } from "../repositories";
 import { SellerCategory } from "../entities/content";
 import { JwtAuthRequest } from "../auth/jwt";
-import { Empty, WithId, WithMsg } from ".";
+import { Empty, WithId, WithMsgContent, WithMsgProduct } from ".";
 
 export function newHandlerContent(repo: IRepositoryContent) {
   return new HandlerContent(repo);
 }
-
-// class CreateContentRequest {
-//   @IsNotEmpty()
-//   userId!: string;
-
-//   @IsString()
-//   @IsNotEmpty()
-//   @Expose({ name: "place_name" })
-//   place_name!: string;
-
-//   @IsArray()
-//   @IsString({ each: true })
-//   operating_time!: string[];
-
-//   @IsString()
-//   description!: string;
-
-//   @IsLatitude()
-//   latitude!: number;
-
-//   @IsLongitude()
-//   longitude!: number;
-
-//   @IsString()
-//   address!: string;
-
-//   @IsString()
-//   tel!: string;
-
-//   @IsEmail()
-//   email!: string;
-
-//   @IsString()
-//   @IsIn(["Bar", "Brewer"])
-//   category!: string;
-
-//   @IsString({ each: true })
-//   @IsArray()
-//   imges!: string[];
-// }
 
 class HandlerContent {
   private readonly repo: IRepositoryContent;
@@ -56,20 +16,14 @@ class HandlerContent {
   }
 
   async createContent(
-    req: JwtAuthRequest<Empty, WithMsg>,
+    req: JwtAuthRequest<Empty, WithMsgContent>,
     res: Response
   ): Promise<Response> {
     const userId = req.payload.id;
     const body = { ...req.body };
 
-    // const body = plainToInstance(CreateContentRequest, body);
-    // const validationErrors = await validate(body);
-    // console.log(validationErrors);
-    // if (validationErrors.length > 0) {
-    //   return res.status(400).json(validationErrors);
-    // }
-    if(!body){
-      return res.status(400).json({error: `no body in req`})
+    if (!body) {
+      return res.status(400).json({ error: `no body in req` });
     }
 
     console.log("body", body)
@@ -98,6 +52,35 @@ class HandlerContent {
     }
   }
 
+  async createProduct(
+    req: JwtAuthRequest<Empty, WithMsgProduct>,
+    res: Response
+  ): Promise<Response> {
+    const userId = req.payload.id;
+    const body = { ...req.body, userId };
+
+    if (!body) {
+      return res.status(400).json({ error: `no body in req` });
+    }
+
+    try {
+      const createdProduct = await this.repo.createProduct({
+        userId: body.userId,
+        sellerId: body.sellerId,
+        product_name: body.product_name,
+        product_category: body.product_category,
+        description: body.description,
+        images: body.images,
+      });
+
+      return res.status(201).json(createdProduct).end();
+    } catch (err) {
+      console.log(err);
+      const errMsg = `failed to create product`;
+      return res.status(500).json({ error: errMsg }).end();
+    }
+  }
+
   private convertStringToSellerCategory(sc: string): SellerCategory {
     switch (sc) {
       case "Bar":
@@ -118,6 +101,15 @@ class HandlerContent {
     } catch (err) {
       console.error("failed to get contents", err);
       return res.status(500).json({ error: "failed to get contents" }).end();
+    }
+  }
+
+  async getProducts(req: Request, res: Response): Promise<Response> {
+    try {
+      const products = await this.repo.getProducts();
+      return res.status(200).json(products).end();
+    } catch (err) {
+      return res.status(500).json({ error: "failed to get products" }).end();
     }
   }
 
@@ -147,36 +139,34 @@ class HandlerContent {
       });
   }
 
-  async deleteContent(
-    req: JwtAuthRequest<WithId, WithMsg>,
-    res: Response
-  ): Promise<Response> {
+  async getProductbyId(req: Request, res: Response): Promise<Response> {
     const id = Number(req.params.id);
     if (isNaN(id)) {
       return res
         .status(400)
-        .json({ error: `id: ${req.params.id} is not a number` });
+        .json({ error: `id ${req.params.id} is not a number` });
     }
 
     return this.repo
-      .deleteUserContent(id)
-      .then((deleted) =>
-        res
-          .status(200)
-          .json({ status: `deleted content id: ${id}` })
-          .end()
-      )
+      .getProductById(id)
+      .then((product) => {
+        if (!product) {
+          return res
+            .status(404)
+            .json({ error: `no product : ${id}` })
+            .end();
+        }
 
+        return res.status(200).json(product).end();
+      })
       .catch((err) => {
-        console.error(`failed to delete content ${id} : ${err}`);
-        return res
-          .status(500)
-          .json({ error: `failed to delete content ${id}` });
+        const errMsg = `failed to get product ${id}: ${err}`;
+        return res.status(500).json({ error: errMsg });
       });
   }
 
   async updateUserContent(
-    req: JwtAuthRequest<WithId, WithMsg>,
+    req: JwtAuthRequest<WithId, WithMsgContent>,
     res: Response
   ): Promise<Response> {
     const id = Number(req.params.id);
@@ -224,13 +214,57 @@ class HandlerContent {
         tel,
         email,
         category,
-        product_category,
         images,
       })
       .then((updated) => res.status(201).json(updated).end())
       .catch((err) => {
         const errMsg = `failed to update content ${id}: ${err}`;
         console.error(errMsg);
+        return res.status(500).json({ error: errMsg }).end();
+      });
+  }
+
+  async updateUserProduct(
+    req: JwtAuthRequest<WithId, WithMsgProduct>,
+    res: Response
+  ): Promise<Response> {
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+      return res
+        .status(400)
+        .json({ error: `id ${req.params.id} is not a number` });
+    }
+
+    if (!req.params.id) {
+      return res.status(400).json({ error: `missing id in params` }).end();
+    }
+
+    const { sellerId, product_name, product_category, description, images } =
+      req.body;
+
+    if (
+      !sellerId ||
+      !product_name ||
+      !product_category ||
+      !description ||
+      !images
+    ) {
+      return res.status(400).json({ error: "missing msg in json body" }).end();
+    }
+
+    return this.repo
+      .updateUserProduct({
+        id,
+        sellerId,
+        userId: req.payload.id,
+        product_name,
+        product_category,
+        description,
+        images,
+      })
+      .then((updated) => res.status(201).json(updated).end())
+      .catch((err) => {
+        const errMsg = `failed to update product ${id}: ${err}`;
         return res.status(500).json({ error: errMsg }).end();
       });
   }

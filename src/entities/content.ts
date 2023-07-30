@@ -1,6 +1,6 @@
 import {
   SellerCategory as PrismaSellerCategory,
-  // ProductCategory as PrismaProductCategory,
+  ProductCategory as PrismaProductCategory,
 } from "@prisma/client";
 
 export enum SellerCategory {
@@ -32,7 +32,7 @@ export interface IContent extends ICreateContent {
   id: number;
 }
 
-export interface IUpdate {
+export interface IUpdateContent {
   id: number;
   userId: string;
   operating_time: string[];
@@ -41,6 +41,17 @@ export interface IUpdate {
   tel: string;
   email: string;
   category: undefined;
-  product_category: undefined;
   images: string[];
+}
+
+export interface ICreateProduct {
+  sellerId: number;
+  userId: string;
+  product_name: string;
+  product_category: PrismaProductCategory;
+  description: string;
+  images: string[];
+}
+export interface IProduct extends ICreateProduct {
+  id: number;
 }

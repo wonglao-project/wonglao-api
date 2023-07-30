@@ -6,11 +6,17 @@ export interface IHanderContent {
   getContents(req: Request, res: Response): Promise<Response>;
   getContentById(req: Request, res: Response): Promise<Response>;
   updateUserContent(
-    req: JwtAuthRequest<WithId, WithMsg>,
+    req: JwtAuthRequest<WithId, WithMsgContent>,
     res: Response
   ): Promise<Response>;
-  deleteContent(
-    req: JwtAuthRequest<WithId, WithMsg>,
+  createProduct(
+    req: JwtAuthRequest<Empty, WithMsgProduct>,
+    res: Response
+  ): Promise<Response>;
+  getProducts(req: Request, res: Response): Promise<Response>;
+  getContentById(req: Request, res: Response): Promise<Response>;
+  updateUserProduct(
+    req: JwtAuthRequest<WithId, WithMsgProduct>,
     res: Response
   ): Promise<Response>;
 }
@@ -52,7 +58,7 @@ export interface WithId {
   id: string;
 }
 
-export interface WithMsg {
+export interface WithMsgContent {
   place_name: string;
   operating_time: string[];
   description: string;
@@ -62,5 +68,13 @@ export interface WithMsg {
   tel: string;
   email: string;
   category: string;
+  images: string[];
+}
+
+export interface WithMsgProduct {
+  sellerId: number;
+  product_name: string;
+  product_category: string;
+  description: string;
   images: string[];
 }
