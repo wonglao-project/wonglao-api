@@ -15,4 +15,5 @@ export interface IRepositoryContent {
   getProducts(): Promise<IProduct[]>;
   getProductById(id: number): Promise<IProduct | null>;
   updateUserProduct(arg: IProduct): Promise<IProduct>;
+  getProductBySellerId(sellerId: number): Promise<IProduct[] | null>;
 }

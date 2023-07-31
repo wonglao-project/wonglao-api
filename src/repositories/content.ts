@@ -5,7 +5,6 @@ import {
   IUpdateContent,
   ICreateProduct,
   IProduct,
-  IContentWithSellerId,
 } from "../entities/content";
 import { IRepositoryContent } from ".";
 
@@ -113,6 +112,12 @@ class RepositoryContent implements IRepositoryContent {
   async getContentById(id: number): Promise<IContent | null> {
     return await this.db.seller.findUnique({
       where: { id },
+    });
+  }
+
+  async getProductBysellerId(sellerId: number): Promise<IProduct[] | null> {
+    return await this.db.product.findMany({
+      where: { sellerId },
     });
   }
 

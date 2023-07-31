@@ -88,8 +88,8 @@ async function main() {
     handlerContent.updateUserContent.bind(handlerContent)
   );
   contentRouter.get(
-    "/product",
-    handlerContent.getProductbyId.bind(handlerContent)
+    "/product/:id",
+    handlerContent.getProductBySellerId.bind(handlerContent)
   );
 
   //Product API
