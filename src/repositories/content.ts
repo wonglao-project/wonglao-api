@@ -5,6 +5,7 @@ import {
   IUpdateContent,
   ICreateProduct,
   IProduct,
+  IContentWithSellerId,
 } from "../entities/content";
 import { IRepositoryContent } from ".";
 

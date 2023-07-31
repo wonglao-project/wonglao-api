@@ -26,7 +26,7 @@ class HandlerContent {
       return res.status(400).json({ error: `no body in req` });
     }
 
-    console.log("body", body)
+    console.log("body", body);
 
     try {
       const createdContent = await this.repo.createContent({

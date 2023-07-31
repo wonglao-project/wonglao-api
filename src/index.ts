@@ -87,6 +87,10 @@ async function main() {
     handlerMiddleware.jwtMiddleware.bind(handlerMiddleware),
     handlerContent.updateUserContent.bind(handlerContent)
   );
+  contentRouter.get(
+    "/product",
+    handlerContent.getProductbyId.bind(handlerContent)
+  );
 
   //Product API
   productRouter.post(
