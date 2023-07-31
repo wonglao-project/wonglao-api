@@ -115,7 +115,7 @@ class RepositoryContent implements IRepositoryContent {
     });
   }
 
-  async getProductBysellerId(sellerId: number): Promise<IProduct[] | null> {
+  async getProductBySellerId(sellerId: number): Promise<IProduct[] | null> {
     return await this.db.product.findMany({
       where: { sellerId },
     });
