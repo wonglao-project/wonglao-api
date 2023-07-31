@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import "dotenv/config";
 import { IGoogleApiService } from "../services";
 import { IHandlerGoogleService } from ".";
+// import { PlaceDetailsResponseData } from "@googlemaps/google-maps-services-js";
 
 
 export function newHandlerGoogleService(client: IGoogleApiService) {
@@ -25,6 +26,7 @@ class HandlerGoogleService implements IHandlerGoogleService {
     }
 
     const placeName = req.query.name;
+    console.log(placeName)
 
     if (typeof placeName !== "string") {
       return res.status(400).json({ error: `name must be string` });
@@ -40,23 +42,49 @@ class HandlerGoogleService implements IHandlerGoogleService {
       console.log({ result: result.data.candidates });
 
       const placeId = result.data.candidates[0].place_id;
-      const details = await this.client.getPlaceDetail(placeId);
 
-      const detailsResult = {
-        place_name: details.result.name,
-        operating_time: details.result.opening_hours?.weekday_text,
-        latitude: details.result.geometry?.location.lat,
-        longitude: details.result.geometry?.location.lng,
-        address: details.result.formatted_address,
-        tel: details.result.formatted_phone_number,
+      console.log(placeId)
+
+      try {
+        const details = await this.client.getPlaceDetail(placeId);
+        // undefinedToEmptyString(details);
+  
+        const detailsResult = {
+          place_name: details.result.name || "",
+          operating_time: details.result.opening_hours?.weekday_text || ["", "", "", "", "", "", ""],
+          latitude: details.result.geometry?.location.lat || 0,
+          longitude: details.result.geometry?.location.lng || 0,
+          address: details.result.formatted_address || "",
+          tel: details.result.formatted_phone_number || "",
+        }
+  
+        console.log(details);
+        console.log(detailsResult);
+        return res.status(200).json(detailsResult).end();
+  
+      } catch(err) {
+        console.error(err)
+        return res.status(500).json({error: `failed to get place details for id ${placeId}`})
       }
-
-      console.log(details);
-      console.log(detailsResult);
-      return res.status(200).json(detailsResult).end();
     } catch (err) {
-      console.log(err);
-      return res.status(500).json({ error: `failed to get place id` }).end();
+      console.error(err);
+      return res.status(500).json({ error: `failed to get place id for ${placeName}` }).end();
     }
   }
 }
+
+// function undefinedToEmptyString(placeData: PlaceDetailsResponseData) {
+//   for (const k in placeData.result) {
+//     if (placeData.result[k] === undefined) {
+//       placeData[k].result = ""
+//     }
+//   }
+
+//   if(!placeData.result.opening_hours) {
+//     placeData = { result: { ...placeData.result, opening_hours: {
+//       weekday_text: ["", "", "", "", "", "", ""],
+//       open_now: placeData.result.opening_hours.open_now
+
+//     } } }
+//   }
+// }
