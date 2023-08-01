@@ -29,5 +29,5 @@ jobs:
             FROM_REPO=${{ github.repositoryUrl }}
             APP_VERSION=${{ github.ref_name }}
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-cicd:${{ github.ref_name }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-cicd:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/wonglao-backend:${{ github.ref_name }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/wonglao-backend:latest
