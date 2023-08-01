@@ -14,8 +14,7 @@ ENV API_KEY="MY_API_KEY"
 
 RUN npm install
 RUN npm run build
-RUN npm run migrate:prod
 
 EXPOSE 8000/TCP
 
-CMD ["node", "dist/index.js"]
+CMD ["npm", "run", "start:migrate:prod"]
