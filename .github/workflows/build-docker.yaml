@@ -4,8 +4,15 @@ run-name: "Build and push Docker image for ${{ github.event_name }} on ${{ githu
 on:
   push:
     tags: "**"
+    branches: [main]
 
 jobs:
+  #   test:
+  #     name: Running test workflow on ubuntu-latest
+  #     uses: ./.github/workflows/test-template.yaml
+  #     with:
+  #       runs-on: ubuntu-latest
+
   docker:
     runs-on: ubuntu-latest
     steps:
@@ -29,5 +36,5 @@ jobs:
             FROM_REPO=${{ github.repositoryUrl }}
             APP_VERSION=${{ github.ref_name }}
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/wonglao-backend:${{ github.ref_name }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/wonglao-backend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/wonglao-frontend:${{ github.ref_name }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/wonglao-frontend:latest

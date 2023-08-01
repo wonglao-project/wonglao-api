@@ -17,4 +17,4 @@ RUN npm run build
 
 EXPOSE 8000/TCP
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "run", "start:migrate:prod"]
