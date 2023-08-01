@@ -17,7 +17,7 @@ class GoogleApiService implements IGoogleApiService {
     async getPlaceId(placeNameInput: String): Promise<any>{
         return this.client.findPlaceFromText({
             params: {
-                input: placeNameInput + "Thailand",
+                input: placeNameInput + "",
                 inputtype: PlaceInputType.textQuery ,
                 client_id: "",
                 client_secret: "",
