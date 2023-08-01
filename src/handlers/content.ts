@@ -66,7 +66,7 @@ class HandlerContent {
     try {
       const createdProduct = await this.repo.createProduct({
         userId: body.userId,
-        sellerId: body.sellerId,
+        sellerId: Number(body.sellerId),
         product_name: body.product_name,
         product_category: body.product_category,
         description: body.description,
