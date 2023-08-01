@@ -1,3 +1,14 @@
 services:
-  nginx:
-    image: imageName
+  fe:
+    image: worameta/wonglao-frontend:latest
+    ports:
+      - "80:80"
+  be:
+    image: worameta/wonglao-backend:latest
+    ports:
+      - "8000:8000"
+    environment:
+      CORS: ${CORS}
+      API_KEY: ${API_KEY}      
+  pg:
+  rd:

@@ -4,9 +4,8 @@ WORKDIR /app
 
 COPY . .
 
+ENV CORS=yes
 ENV PORT=8000
-ENV POSTGRES_PORT=5432
-ENV POSTGRES_PASSWORD=academy
 ENV REDIS_HOST=localhost
 ENV REDIS_PORT=6379
 ENV DATABASE_URL="postgresql://postgres:academy@localhost:5432/postgres?schema=public"

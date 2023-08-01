@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
-import cors from "cors";
 import { createClient } from "redis";
 
 import { newRepositoryContent } from "./repositories/content";
@@ -15,6 +14,7 @@ import { newRepositoryBlacklist } from "./repositories/blacklist";
 import { HandlerMiddleware } from "./auth/jwt";
 
 async function main() {
+  const useCors = process.env.CORS || "yes";
   const db = new PrismaClient();
   const googlePlaceClient = new Client();
 
@@ -24,8 +24,8 @@ async function main() {
   const redis = createClient({ url: `redis://${redisHost}:${redisPort}` });
 
   try {
-    redis.connect();
-    db.$connect();
+    await redis.connect();
+    await db.$connect();
   } catch (err) {
     console.error(err);
     return;
@@ -48,7 +48,10 @@ async function main() {
 
   server.use(express.json());
 
-  server.use(cors());
+  if (useCors.startsWith("y")) {
+    const cors = require("cors")
+    server.use(cors());
+  }
 
   const userRouter = express.Router();
   const contentRouter = express.Router();
