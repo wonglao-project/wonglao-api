@@ -19,6 +19,7 @@ export interface IHanderContent {
     req: JwtAuthRequest<WithId, WithMsgProduct>,
     res: Response
   ): Promise<Response>;
+  getProductBySellerId(req: Request, res: Response): Promise<Response>;
 }
 
 export interface IHandlerGoogleService {
